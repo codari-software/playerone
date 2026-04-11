@@ -31,7 +31,7 @@ export default async function HealthPage() {
 
   const canAccess = user.plan === 'HERO' || user.plan === 'LEGEND' || user.activeModule === 'HEALTH';
 
-  if (!canAccess && user.plan === 'FREE') {
+  if (!canAccess && user.plan === 'INICIANTE') {
     return (
       <div className="text-center py-20 px-4">
         <div className="p-[2px] pixel-corners bg-[#333] inline-block mb-6">

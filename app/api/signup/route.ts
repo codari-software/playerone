@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
     // Verifica se existe um plano pendente no cookie de compra
     const purchaseCookie = cookies().get('playerone_access');
-    const pendingPlan = purchaseCookie?.value || 'FREE';
+    const pendingPlan = purchaseCookie?.value || 'INICIANTE';
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({

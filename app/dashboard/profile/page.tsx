@@ -97,7 +97,7 @@ export default async function ProfilePage() {
                
                <div className="font-press-start text-4xl text-white uppercase tracking-widest">{user.plan}</div>
                
-               {user.plan === 'FREE' ? (
+               {user.plan === 'INICIANTE' ? (
                  <p className="font-vt323 text-2xl text-gray-500 leading-tight">
                    Seu status atual é limitado. Faça o upgrade para se tornar um Herói ou Lenda e desbloquear todos os módulos do sistema.
                  </p>
@@ -108,7 +108,7 @@ export default async function ProfilePage() {
                )}
             </div>
 
-            {user.plan === 'FREE' && (
+            {user.plan === 'INICIANTE' && (
               <div id="upgrade" className="mt-8 pt-8 border-t-2 border-[#222]">
                 <StripeCheckoutButton planId="heroi" active>
                    DAR UPGRADE AGORA

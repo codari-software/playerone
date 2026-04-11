@@ -1,0 +1,173 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String
+  image         String?
+  xp            Int       @default(0)
+  level         Int       @default(1)
+  currentStreak Int       @default(0)
+  longestStreak Int       @default(0)
+  lastActiveAt  DateTime  @default(now())
+  plan          Plan      @default(INICIANTE)
+  activeModule  Module?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  habits              Habit[]
+  financeTransactions FinanceTransaction[]
+  healthLogs          HealthLog[]
+  userAchievements    UserAchievement[]
+  sessions            Session[]
+  accounts            Account[]
+}
+
+enum Plan {
+  INICIANTE
+  HERO
+  LEGEND
+}
+
+enum Module {
+  HABITS
+  FINANCES
+  HEALTH
+}
+
+model Habit {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  xpReward    Int      @default(10)
+  frequency   Frequency @default(DAILY)
+  isCompleted Boolean  @default(false)
+  streak      Int      @default(0)
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+}
+
+enum Frequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+model FinanceTransaction {
+  id          String            @id @default(cuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        TransactionType
+  amount      Float
+  category    String
+  description String?
+  date        DateTime          @default(now())
+  createdAt   DateTime          @default(now())
+
+  @@index([userId])
+  @@index([date])
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model HealthLog {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         HealthType
+  value        Float
+  unit         String
+  description  String?
+  xpEarned     Int        @default(5)
+  date         DateTime   @default(now())
+  createdAt    DateTime   @default(now())
+
+  @@index([userId])
+  @@index([date])
+}
+
+enum HealthType {
+  EXERCISE
+  WATER
+  SLEEP
+}
+
+model Achievement {
+  id               String            @id @default(cuid())
+  name             String
+  description      String
+  icon             String
+  xpReward         Int               @default(50)
+  requirement      String
+  requirementValue Int
+  category         String
+  createdAt        DateTime          @default(now())
+
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+  @@index([userId])
+}
+
+// NextAuth models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

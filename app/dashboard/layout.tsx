@@ -18,12 +18,14 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-[#111111] text-white font-vt323 selection:bg-[#ff6b6b] selection:text-white">
       <DashboardHeader />
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row">
         <DashboardNav />
         <main className="flex-1 p-4 md:p-8 min-h-[calc(100vh-4rem)] w-full overflow-hidden">
           <div className="w-full">
             {children}
           </div>
         </main>
+      </div>
     </div>
   );
 }

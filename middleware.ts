@@ -20,14 +20,12 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // --- REGRA DE BLOQUEIO DO LOGIN/SIGNUP ---
-  // Se estiver tentando acessar login ou signup
-  if (pathname === "/login" || pathname === "/signup") {
-    // Só permite passar se:
-    // 1. Já estiver logado (para que o NextAuth o mande para o dashboard)
-    // 2. Tiver o cookie de compra confirmada
+  // --- REGRA DE BLOQUEIO DO SIGNUP ---
+  // Se estiver tentando acessar signup
+  if (pathname === "/signup") {
+    // Só permite passar se tiver o cookie de compra ou já logado
     if (!isAuth && !hasPurchaseCookie) {
-      console.log("Acesso negado ao login: sem cookie de compra");
+      console.log("Acesso negado ao signup: sem cookie de compra");
       return NextResponse.redirect(new URL("/#planos", req.nextUrl.origin));
     }
   }

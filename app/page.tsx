@@ -25,7 +25,7 @@ export default function HomePage() {
           </div>
           <div className="flex items-center gap-4">
             <Link href="/login">
-              <RetroButton className="hidden sm:inline-block">ENTRAR</RetroButton>
+              <RetroButton>ENTRAR</RetroButton>
             </Link>
             <Link href="#planos">
               <RetroButton active>Jogar Agora</RetroButton>

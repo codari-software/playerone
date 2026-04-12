@@ -18,18 +18,22 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#111111] text-white font-vt323 selection:bg-[#ff6b6b] selection:text-white flex flex-col overflow-x-hidden">
       
       {/* --- Navegação --- */}
-      <nav className="w-full flex justify-center border-b-[4px] border-[#222]">
-        <div className="w-full max-w-7xl px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="font-press-start text-white text-xl sm:text-2xl tracking-widest uppercase hover:text-[#ff6b6b] transition-colors cursor-pointer">PlayerOne</h1>
+      <nav className="w-full border-b-[4px] border-[#222]">
+        <div className="w-full max-w-7xl mx-auto px-4 py-6 block sm:flex sm:items-center sm:justify-between text-center sm:text-left">
+          <div className="mb-6 sm:mb-0">
+            <h1 className="font-press-start text-white text-xl sm:text-2xl tracking-widest uppercase inline-block hover:text-[#ff6b6b] transition-colors cursor-pointer">PlayerOne</h1>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/login">
-              <RetroButton>ENTRAR</RetroButton>
-            </Link>
-            <Link href="#planos">
-              <RetroButton active>Jogar Agora</RetroButton>
-            </Link>
+          <div className="block sm:flex sm:items-center space-y-4 sm:space-y-0 sm:gap-4">
+            <div className="block w-full sm:w-auto">
+              <Link href="/login" className="block w-full sm:inline-block">
+                <RetroButton className="w-full sm:w-auto text-center !block sm:!inline-block">ENTRAR</RetroButton>
+              </Link>
+            </div>
+            <div className="block w-full sm:w-auto">
+              <Link href="#planos" className="block w-full sm:inline-block">
+                <RetroButton active className="w-full sm:w-auto text-center !block sm:!inline-block">Jogar Agora</RetroButton>
+              </Link>
+            </div>
           </div>
         </div>
       </nav>

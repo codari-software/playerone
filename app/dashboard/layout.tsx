@@ -20,7 +20,7 @@ export default async function DashboardLayout({
       <DashboardHeader />
       <div className="w-full mx-auto flex flex-col md:flex-row">
         <DashboardNav />
-        <main className="flex-1 p-4 md:p-8 min-h-[calc(100vh-4rem)] w-full overflow-hidden">
+        <main className="flex-1 p-4 md:p-8 min-h-[calc(100vh-4rem)] w-full">
           <div className="w-full">
             {children}
           </div>

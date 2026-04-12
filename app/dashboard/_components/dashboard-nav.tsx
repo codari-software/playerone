@@ -27,8 +27,8 @@ export function DashboardNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="w-64 bg-[#111] border-r-[4px] border-[#222] min-h-[calc(100vh-4rem)] p-4">
-      <div className="space-y-4">
+    <nav className="w-full md:w-64 bg-[#111] border-b-[4px] md:border-b-0 md:border-r-[4px] border-[#222] md:min-h-[calc(100vh-4rem)] p-4 overflow-x-auto md:overflow-visible custom-scrollbar">
+      <div className="flex md:flex-col gap-3 md:gap-0 md:space-y-4 w-max md:w-full pb-2 md:pb-0">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -37,7 +37,7 @@ export function DashboardNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="block group"
+              className="block group shrink-0"
             >
               <div className={cn(
                 'p-[2px] pixel-corners transition-all',
@@ -47,7 +47,7 @@ export function DashboardNav() {
                   'pixel-corners flex items-center gap-3 px-4 py-3 text-xl transition-all',
                   isActive ? 'bg-[#ff6b6b] text-white shadow-[inset_-2px_-2px_0px_rgba(0,0,0,0.3)]' : 'bg-[#18181b] text-gray-400 group-hover:text-white'
                 )}>
-                  <Icon className={cn("w-5 h-5", isActive ? "text-white" : "text-gray-500 group-hover:text-[#ff6b6b]")} />
+                  <Icon className={cn("w-5 h-5 hidden sm:block", isActive ? "text-white" : "text-gray-500 group-hover:text-[#ff6b6b]")} />
                   <span>{item.name}</span>
                 </div>
               </div>

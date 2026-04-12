@@ -18,9 +18,9 @@ export default async function DashboardLayout({
   return (
     <div className="min-h-screen bg-[#111111] text-white font-vt323 selection:bg-[#ff6b6b] selection:text-white">
       <DashboardHeader />
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         <DashboardNav />
-        <main className="flex-1 p-8 min-h-[calc(100vh-4rem)]">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 min-h-[calc(100vh-4rem)] w-full overflow-hidden">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

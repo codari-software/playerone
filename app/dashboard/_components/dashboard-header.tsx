@@ -11,7 +11,7 @@ export function DashboardHeader() {
 
   return (
     <header className="sticky top-0 z-50 bg-[#111] border-b-[4px] border-[#222]">
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/dashboard" className="flex items-center gap-3">
             <h1 className="font-press-start text-white text-xl tracking-widest uppercase hover:text-[#ff6b6b] transition-colors">PlayerOne</h1>

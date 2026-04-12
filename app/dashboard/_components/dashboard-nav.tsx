@@ -27,8 +27,8 @@ export function DashboardNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="w-full md:w-64 bg-[#111] border-b-[4px] md:border-b-0 md:border-r-[4px] border-[#222] md:min-h-[calc(100vh-4rem)] p-4">
-      <div className="flex flex-col md:flex-col gap-2 md:gap-0 md:space-y-4 w-full">
+    <nav className="w-full md:w-64 bg-[#111] border-b-[4px] md:border-b-0 md:border-r-[4px] border-[#222] md:min-h-[calc(100vh-4rem)] p-4 overflow-x-auto custom-scrollbar">
+      <div className="flex md:flex-col gap-3 md:gap-0 md:space-y-4 w-max md:w-full pb-2 md:pb-0">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;

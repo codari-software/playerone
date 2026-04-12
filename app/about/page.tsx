@@ -97,14 +97,6 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-
-          {/* CTA */}
-          <div className="text-center">
-            <Link href="/signup">
-              <RetroButton active className="scale-110 sm:scale-125">ENTRAR PARA O MUNDO DO JOGO</RetroButton>
-            </Link>
-          </div>
-
         </div>
       </main>
 

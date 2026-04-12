@@ -17,14 +17,23 @@ export function ContactForm() {
     setIsLoading(true);
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Falha no envio');
+      }
       
       toast.success('Mensagem enviada! O pombo correio já partiu.');
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error: any) {
       console.error('Contact form error:', error);
-      toast.error('O feitiço falhou. Tente novamente.');
+      toast.error('O feitiço falhou. Verifique se configurou o SMTP no painel.');
     } finally {
       setIsLoading(false);
     }

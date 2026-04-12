@@ -14,6 +14,7 @@ model User {
   name          String?
   email         String    @unique
   password      String
+  isVerified    Boolean   @default(false)
   image         String?
   xp            Int       @default(0)
   level         Int       @default(1)

@@ -24,6 +24,9 @@ export default function HomePage() {
             <h1 className="font-press-start text-white text-xl sm:text-2xl tracking-widest uppercase hover:text-[#ff6b6b] transition-colors cursor-pointer">PlayerOne</h1>
           </div>
           <div className="flex items-center gap-4">
+            <Link href="/login">
+              <RetroButton className="hidden sm:inline-block">ENTRAR</RetroButton>
+            </Link>
             <Link href="#planos">
               <RetroButton active>Jogar Agora</RetroButton>
             </Link>

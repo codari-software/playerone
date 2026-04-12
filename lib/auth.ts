@@ -43,6 +43,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid credentials');
         }
 
+        if (!user.isVerified) {
+          throw new Error('Você precisa confirmar seu e-mail antes de jogar.');
+        }
+
         return user;
       },
     }),

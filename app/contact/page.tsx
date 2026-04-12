@@ -50,7 +50,7 @@ export default function ContactPage() {
           <SupportCard 
             icon={Mail} 
             title="MENSAGEM VIA CORVO" 
-            desc="suporte@playerone.com.br" 
+            desc="suporte@playerone.tech" 
           />
           <SupportCard 
             icon={MessageCircle} 

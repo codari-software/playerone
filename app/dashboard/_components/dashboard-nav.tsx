@@ -27,8 +27,8 @@ export function DashboardNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="w-full md:w-64 bg-[#111] border-b-[4px] md:border-b-0 md:border-r-[4px] border-[#222] md:min-h-[calc(100vh-4rem)] p-4 overflow-x-auto md:overflow-visible custom-scrollbar">
-      <div className="flex md:flex-col gap-3 md:gap-0 md:space-y-4 w-max md:w-full pb-2 md:pb-0">
+    <nav className="w-full md:w-64 bg-[#111] border-b-[4px] md:border-b-0 md:border-r-[4px] border-[#222] md:min-h-[calc(100vh-4rem)] py-4 overflow-x-auto md:overflow-visible custom-scrollbar">
+      <div className="flex md:flex-col gap-3 md:gap-0 md:space-y-4 w-max md:w-full px-4 pb-2 md:pb-0">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -44,10 +44,10 @@ export function DashboardNav() {
                 isActive ? 'bg-[#ff6b6b]' : 'bg-[#333] hover:bg-[#555]'
               )}>
                 <div className={cn(
-                  'pixel-corners flex items-center gap-3 px-4 py-3 text-xl transition-all',
+                  'pixel-corners flex items-center justify-center md:justify-start gap-3 px-6 py-4 md:px-4 md:py-3 text-xl transition-all',
                   isActive ? 'bg-[#ff6b6b] text-white shadow-[inset_-2px_-2px_0px_rgba(0,0,0,0.3)]' : 'bg-[#18181b] text-gray-400 group-hover:text-white'
                 )}>
-                  <Icon className={cn("w-5 h-5 hidden sm:block", isActive ? "text-white" : "text-gray-500 group-hover:text-[#ff6b6b]")} />
+                  <Icon className={cn("w-5 h-5", isActive ? "text-white" : "text-gray-500 group-hover:text-[#ff6b6b]")} />
                   <span>{item.name}</span>
                 </div>
               </div>

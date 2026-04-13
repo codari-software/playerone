@@ -1,6 +1,21 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function SuccessPage() {
+  useEffect(() => {
+    // Dispara evento Purchase quando o usuário chega na página de sucesso
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'Purchase', {
+        currency: 'BRL',
+        value: 49.90,
+        content_type: 'product',
+        content_name: 'PlayerOne Assinatura',
+      });
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#111111] text-white font-vt323 flex items-center justify-center p-4">
       <div className="max-w-md w-full p-[2px] pixel-corners bg-[#ff6b6b] animate-in zoom-in duration-500">
@@ -33,3 +48,4 @@ export default function SuccessPage() {
     </div>
   );
 }
+

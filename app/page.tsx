@@ -167,7 +167,14 @@ export default function HomePage() {
         <section id="planos" className="w-full max-w-7xl px-4 py-24 flex flex-col items-center scroll-mt-20">
           <div className="text-center mb-16">
             <h2 className="font-press-start text-2xl sm:text-4xl text-white mb-4">ESPECIFICAÇÕES DO SISTEMA (PLANOS)</h2>
-            <p className="text-2xl text-gray-400">Desbloqueie todo o mapa escolhendo seu nível de compromisso.</p>
+            <p className="text-2xl text-gray-400 mb-6">Desbloqueie todo o mapa escolhendo seu nível de compromisso.</p>
+            
+            <div className="inline-block p-[2px] pixel-corners bg-gradient-to-r from-red-500 to-orange-500 shadow-[0_0_15px_rgba(239,68,68,0.2)] animate-pulse">
+              <div className="pixel-corners bg-[#18181b] px-6 py-3 flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+                <span className="font-press-start text-xs sm:text-sm text-red-500 tracking-wider">⚠️ ALERTA DO SISTEMA:</span>
+                <span className="text-xl md:text-2xl text-gray-300">As Inscrições da <strong className="text-white">Season 1</strong> acabam em breve! Garanta seu plano fundador.</span>
+              </div>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 w-full max-w-5xl">
@@ -216,6 +223,19 @@ export default function HomePage() {
                   </ul>
                   <StripeCheckoutButton planId="lenda">SELECIONAR</StripeCheckoutButton>
                </div>
+            </div>
+          </div>
+
+          {/* --- Trust Badge / Guarantee --- */}
+          <div className="mt-16 w-full max-w-3xl flex items-center gap-6 p-[2px] pixel-corners bg-gradient-to-r from-green-500 to-emerald-400 opacity-90 hover:opacity-100 transition-opacity">
+            <div className="pixel-corners bg-[#111] p-6 sm:p-8 flex flex-col sm:flex-row items-center text-center sm:text-left gap-6 w-full">
+              <div className="text-6xl sm:animate-bounce">🛡️</div>
+              <div>
+                <h3 className="font-press-start text-green-400 text-lg mb-3">RISCO ZERO: 7 DIAS DE TESTE</h3>
+                <p className="text-gray-300 text-xl">
+                  Se você não sentir que a sua produtividade diária se transformou num jogo muito mais fácil em até 7 dias, devolvemos 100% da sua moeda de ouro. Sem letras miúdas.
+                </p>
+              </div>
             </div>
           </div>
         </section>

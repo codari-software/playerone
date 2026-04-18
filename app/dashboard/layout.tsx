@@ -18,6 +18,7 @@ export default async function DashboardLayout({
 
   let user = null;
   let isTrialExpired = false;
+  let trialRemainingMs = 0;
 
   if (userId) {
     user = await prisma.user.findUnique({
@@ -31,14 +32,21 @@ export default async function DashboardLayout({
       }
     });
 
+    trialRemainingMs = 0;
     if (user?.isGuest && user.plan === 'INICIANTE') {
       const trialDuration = 7 * 24 * 60 * 60 * 1000; // 7 dias em ms
       const timeSinceCreation = Date.now() - new Date(user.createdAt).getTime();
+      trialRemainingMs = Math.max(0, trialDuration - timeSinceCreation);
+      
       if (timeSinceCreation > trialDuration) {
         isTrialExpired = true;
       }
     }
   }
+
+  const trialDays = Math.floor(trialRemainingMs / (24 * 60 * 60 * 1000));
+  const trialHours = Math.floor((trialRemainingMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+  const trialTimeFormatted = trialRemainingMs > 0 ? `${trialDays}d ${trialHours}h` : null;
 
   return (
     <div className="min-h-screen bg-[#111111] text-white font-vt323 selection:bg-[#ff6b6b] selection:text-white">
@@ -46,7 +54,8 @@ export default async function DashboardLayout({
       
       <DashboardHeader 
         userName={user?.nickname || user?.name || 'Jogador'} 
-        isGuest={!session}
+        isGuest={!!user?.isGuest}
+        trialTime={trialTimeFormatted}
       />
       
       <div className={cn(

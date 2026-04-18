@@ -1,10 +1,12 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { User, Crown, Zap, Flame, Trophy, Star, Mail, IdCard, Wallet } from 'lucide-react';
+import { Crown, Zap, Flame, Trophy, Star, Mail, IdCard, Wallet, Sparkles } from 'lucide-react';
 import { getLevelTitle, getXpProgress } from '@/lib/xp-system';
 import { cn } from '@/lib/utils';
 import { StripeCheckoutButton } from '@/components/StripeCheckoutButton';
+import { CharacterDisplay } from './_components/character-display';
+import { AvatarStore } from './_components/avatar-store';
 
 import { cookies } from 'next/headers';
 
@@ -30,6 +32,11 @@ export default async function ProfilePage() {
           achievement: true,
         },
       },
+      inventory: {
+        include: {
+          item: true
+        }
+      }
     },
   });
 
@@ -44,6 +51,32 @@ export default async function ProfilePage() {
   const xpProgress = getXpProgress(user.xp);
   const title = getLevelTitle(user.level);
 
+  // Get all potential shop items
+  const allItems = await prisma.avatarItem.findMany({
+    orderBy: { priceXP: 'asc' }
+  });
+
+  const equippedItems = user.inventory
+    .filter(ui => ui.isEquipped)
+    .map(ui => ({
+      id: ui.item.id,
+      name: ui.item.name,
+      type: ui.item.type as 'SKIN' | 'WEAPON' | 'SHIELD' | 'HAT'
+    }));
+
+  const storeItems = allItems.map(item => {
+    const userOwned = user.inventory.find(ui => ui.itemId === item.id);
+    return {
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      priceXP: item.priceXP,
+      rarity: item.rarity,
+      isUnlocked: !!userOwned,
+      isEquipped: userOwned?.isEquipped || false
+    };
+  });
+
   return (
     <div className="space-y-10">
       <div className="animate-in fade-in slide-in-from-left duration-500">
@@ -54,40 +87,42 @@ export default async function ProfilePage() {
         <p className="text-2xl text-gray-400">Suas estatísticas vitais e status de assinante.</p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         {/* Personagem Card */}
-        <div className="p-[2px] pixel-corners bg-[#333] animate-in fade-in slide-in-from-top duration-700 delay-100">
-          <div className="pixel-corners bg-[#18181b] p-8 space-y-8">
-            <div className="flex items-center gap-4 border-b-2 border-[#222] pb-6">
-              <div className="p-3 pixel-corners bg-[#ff6b6b]/20">
-                <Crown className="w-10 h-10 text-[#ff6b6b]" />
-              </div>
-              <div>
-                <h2 className="font-press-start text-lg text-white mb-2 uppercase tracking-tighter">{user.name}</h2>
-                <div className="font-press-start text-[8px] text-[#ff6b6b]">{title}</div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-               <div className="flex items-center gap-4 text-gray-500">
-                  <Mail className="w-5 h-5" />
-                  <span className="font-vt323 text-2xl">{user.email}</span>
+        <div className="p-[2px] pixel-corners bg-[#333] animate-in fade-in slide-in-from-top duration-700 delay-100 min-w-0">
+           <div className="pixel-corners bg-[#18181b] p-6 md:p-10 h-full overflow-hidden">
+            <div className="flex flex-col sm:flex-row items-center gap-8 md:gap-12 h-full">
+               {/* Visual Display */}
+               <div className="flex-shrink-0 scale-75 md:scale-100">
+                  <CharacterDisplay equipped={equippedItems} />
                </div>
 
-               <div className="space-y-3">
-                  <div className="flex justify-between font-press-start text-[10px]">
-                     <span className="text-blue-400">LEVEL {user.level}</span>
-                     <span className="text-gray-500">{user.xp} / {xpProgress.xpForNextLevel} XP</span>
+               <div className="flex-1 w-full min-w-0 space-y-6">
+                  <div className="border-b-2 border-[#222] pb-6 space-y-2">
+                    <div className="p-3 pixel-corners bg-[#ff6b6b]/20 inline-block">
+                      <Crown className="w-8 h-8 text-[#ff6b6b]" />
+                    </div>
+                    <div className="min-w-0">
+                      <h2 className="font-press-start text-lg md:text-xl text-white uppercase break-all">{user.nickname || user.name || 'Jogador'}</h2>
+                      <div className="font-press-start text-[8px] md:text-[10px] text-[#ff6b6b] mt-1">{title}</div>
+                    </div>
                   </div>
-                  <div className="h-4 w-full bg-[#111] pixel-corners p-[2px]">
-                     <div 
-                        className="h-full bg-blue-500 pixel-corners transition-all duration-1000"
-                        style={{ width: `${xpProgress.progressPercentage}%` }}
-                     />
+
+                  <div className="space-y-4">
+                    <div className="flex justify-between font-press-start text-[8px] md:text-[10px]">
+                        <span className="text-blue-400">LEVEL {user.level}</span>
+                        <span className="text-gray-500">{user.xp} / {xpProgress.xpForNextLevel} XP</span>
+                    </div>
+                    <div className="h-4 w-full bg-[#111] pixel-corners p-[2px]">
+                        <div 
+                          className="h-full bg-blue-500 pixel-corners transition-all duration-1000 shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+                          style={{ width: `${xpProgress.progressPercentage}%` }}
+                        />
+                    </div>
                   </div>
                </div>
             </div>
-          </div>
+           </div>
         </div>
 
         {/* Plano/Assinatura Card */}
@@ -128,7 +163,7 @@ export default async function ProfilePage() {
       </div>
 
       {/* Stats Mundiais */}
-      <div className="grid md:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom duration-1000 delay-300">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom duration-1000 delay-300">
         <div className="p-[2px] pixel-corners bg-[#333]">
            <div className="pixel-corners bg-[#18181b] p-6 text-center">
               <Zap className="w-6 h-6 text-blue-400 mx-auto mb-3" />
@@ -160,6 +195,20 @@ export default async function ProfilePage() {
               <div className="font-vt323 text-xl text-gray-600 uppercase">LOGS</div>
            </div>
         </div>
+      </div>
+
+      {/* Avatar Shop & Inventory */}
+      <div className="animate-in fade-in duration-1000 delay-500">
+         <div className="flex items-center gap-4 mb-8">
+            <Sparkles className="w-8 h-8 text-yellow-500" />
+            <h2 className="font-press-start text-white text-xl">FORJA E INVENTÁRIO</h2>
+         </div>
+         
+         <div className="p-[2px] pixel-corners bg-[#222]">
+            <div className="pixel-corners bg-[#111] p-6 md:p-10">
+               <AvatarStore items={storeItems} userXP={user.xp} />
+            </div>
+         </div>
       </div>
     </div>
   );

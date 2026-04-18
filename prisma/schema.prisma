@@ -34,6 +34,7 @@ model User {
   healthLogs          HealthLog[]
   userAchievements    UserAchievement[]
   recurringBills      RecurringBill[]
+  inventory           UserItem[]
   sessions            Session[]
   accounts            Account[]
 }
@@ -188,4 +189,36 @@ model RecurringBill {
   updatedAt   DateTime @updatedAt
 
   @@index([userId])
+}
+
+model AvatarItem {
+  id          String   @id @default(cuid())
+  name        String
+  type        ItemType
+  priceXP     Int
+  rarity      String   @default("COMMON")
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  
+  users       UserItem[]
+}
+
+model UserItem {
+  id           String      @id @default(cuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  itemId       String
+  item         AvatarItem  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  isEquipped   Boolean     @default(false)
+  unlockedAt   DateTime    @default(now())
+
+  @@unique([userId, itemId])
+  @@index([userId])
+}
+
+enum ItemType {
+  SKIN
+  WEAPON
+  SHIELD
+  HAT
 }

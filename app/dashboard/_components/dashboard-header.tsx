@@ -2,11 +2,19 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import Image from 'next/image';
-import { LogOut, User, ChevronDown } from 'lucide-react';
+import { LogOut, User, ChevronDown, Timer } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
-export function DashboardHeader({ userName, isGuest }: { userName?: string, isGuest?: boolean }) {
+export function DashboardHeader({ 
+  userName, 
+  isGuest,
+  trialTime 
+}: { 
+  userName?: string, 
+  isGuest?: boolean,
+  trialTime?: string | null
+}) {
   const { data: session } = useSession() || {};
 
   return (
@@ -18,6 +26,17 @@ export function DashboardHeader({ userName, isGuest }: { userName?: string, isGu
           </Link>
 
           <div className="flex items-center gap-6">
+            {/* Trial Counter (Only for Guests) */}
+            {isGuest && trialTime && (
+              <div className="hidden lg:flex items-center gap-2 px-4 py-1.5 pixel-corners bg-[#ff6b6b]/10 border-2 border-[#ff6b6b]/30 animate-pulse transition-all hover:bg-[#ff6b6b]/20">
+                <Timer className="w-4 h-4 text-[#ff6b6b]" />
+                <div className="flex flex-col">
+                  <span className="font-press-start text-[6px] text-gray-500 uppercase leading-none">Trial Expira em</span>
+                  <span className="font-press-start text-[10px] text-[#ff6b6b] leading-tight">{trialTime}</span>
+                </div>
+              </div>
+            )}
+
             {/* User Profile */}
             <Link href="/dashboard/profile" className="group">
               <div className="flex items-center gap-3 cursor-pointer p-2 rounded-xl transition-colors">

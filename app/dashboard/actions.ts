@@ -80,3 +80,19 @@ export async function completeTutorial() {
   return { success: true };
 }
 
+export async function simulateExpiration() {
+  const userId = await getUserId();
+  if (!userId) return { error: 'Unauthorized' };
+
+  // Define a data para 8 dias atrás
+  const eightDaysAgo = new Date();
+  eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { createdAt: eightDaysAgo },
+  });
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}

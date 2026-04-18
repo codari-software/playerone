@@ -4,6 +4,7 @@ import { useSession, signOut } from 'next-auth/react';
 import Image from 'next/image';
 import { LogOut, User, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
+import { simulateExpiration } from '../actions';
 import { cn } from '@/lib/utils';
 
 export function DashboardHeader({ userName, isGuest }: { userName?: string, isGuest?: boolean }) {
@@ -30,6 +31,21 @@ export function DashboardHeader({ userName, isGuest }: { userName?: string, isGu
                 <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-white" />
               </div>
             </Link>
+
+            {/* Simulation Button for Guests */}
+            {isGuest && (
+              <button
+                onClick={async () => {
+                  const res = await simulateExpiration();
+                  if (res.success) window.location.reload();
+                }}
+                className="p-[2px] pixel-corners bg-[#222] hover:bg-red-500 group transition-all"
+              >
+                <div className="pixel-corners bg-[#111] px-3 py-1 text-[8px] font-press-start text-gray-600 group-hover:text-white uppercase transition-colors">
+                  Simular Expiração
+                </div>
+              </button>
+            )}
 
             {/* Logout Button - Only show if not guest */}
             {!isGuest && (

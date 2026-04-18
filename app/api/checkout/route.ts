@@ -40,15 +40,17 @@ export async function POST(req: Request) {
     const { planId, fbc, fbp } = body;
 
     const priceMap: Record<string, string> = {
+      "aventureiro": process.env.STRIPE_PRICE_INICIANTE || "",
       "iniciante": process.env.STRIPE_PRICE_INICIANTE || "",
       "heroi": process.env.STRIPE_PRICE_HEROI || "",
       "lenda": process.env.STRIPE_PRICE_LENDA || "",
     };
 
     const priceMap2Value: Record<string, number> = {
-      "iniciante": 49.9,
-      "heroi": 49.9,
-      "lenda": 79.9,
+      "aventureiro": 19.9,
+      "iniciante": 19.9,
+      "heroi": 29.9,
+      "lenda": 49.9,
     };
 
     const priceId = priceMap[planId?.toLowerCase()];

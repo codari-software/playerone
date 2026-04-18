@@ -96,3 +96,15 @@ export async function simulateExpiration() {
   revalidatePath('/dashboard');
   return { success: true };
 }
+export async function resetExpiration() {
+  const userId = await getUserId();
+  if (!userId) return { error: 'Unauthorized' };
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { createdAt: new Date() },
+  });
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}

@@ -12,8 +12,9 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   name          String?
-  email         String    @unique
-  password      String
+  email         String?    @unique
+  password      String?
+  isGuest       Boolean   @default(false)
   isVerified    Boolean   @default(false)
   image         String?
   xp            Int       @default(0)
@@ -23,6 +24,8 @@ model User {
   lastActiveAt  DateTime  @default(now())
   plan          Plan      @default(INICIANTE)
   activeModule  Module?
+  nickname      String?   @unique
+  hasCompletedTutorial Boolean @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

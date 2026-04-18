@@ -7,17 +7,21 @@ import { HealthLogList } from './_components/health-log-list';
 import { AddHealthLogButton } from './_components/add-health-log-button';
 import Link from 'next/link';
 
+import { cookies } from 'next/headers';
+
 export const dynamic = 'force-dynamic';
 
 export default async function HealthPage() {
   const session = await getServerSession(authOptions);
+  const guestId = cookies().get('playerone_guest_id')?.value;
+  const userId = (session?.user as any)?.id || guestId;
   
-  if (!session?.user) {
-    redirect('/login');
+  if (!userId) {
+    redirect('/');
   }
 
   const user = await prisma.user.findUnique({
-    where: { id: (session.user as any).id },
+    where: { id: userId },
     include: {
       healthLogs: {
         orderBy: { date: 'desc' },
@@ -26,10 +30,11 @@ export default async function HealthPage() {
   });
 
   if (!user) {
-    redirect('/login');
+    redirect('/');
   }
 
-  const canAccess = user.plan === 'HERO' || user.plan === 'LEGEND' || user.activeModule === 'HEALTH';
+
+  const canAccess = user.plan === 'HERO' || user.plan === 'LEGEND' || user.isGuest || user.activeModule === 'HEALTH';
 
   if (!canAccess && user.plan === 'INICIANTE') {
     return (

@@ -59,10 +59,10 @@ export default function HomePage() {
             PlayerOne gamifica seus hábitos, finanças e saúde. PARE DE APENAS SOBREVIVER. COMECE A JOGAR!
           </p>
           
-          <Link href="#planos">
-            <RetroButton active className="scale-105 sm:scale-110 mb-2">INICIAR AVENTURA »</RetroButton>
+          <Link href="/dashboard">
+            <RetroButton active className="scale-105 sm:scale-110 mb-2">TESTE GRÁTIS POR 7 DIAS »</RetroButton>
           </Link>
-          <span className="text-gray-500 text-base mt-4">* Junte-se a +10.000 jogadores na season 1</span>
+          <span className="text-gray-500 text-base mt-4 block">Aproveite a Season 1 sem custos iniciais</span>
         </section>
 
         {/* --- Social Proof / Status Section --- */}
@@ -163,77 +163,52 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* --- Pricing --- */}
+        {/* --- Trial Offer Section (Replaces Pricing) --- */}
         <section id="planos" className="w-full max-w-7xl px-4 py-24 flex flex-col items-center scroll-mt-20">
-          <div className="text-center mb-16">
-            <h2 className="font-press-start text-2xl sm:text-4xl text-white mb-4">ESPECIFICAÇÕES DO SISTEMA (PLANOS)</h2>
-            <p className="text-2xl text-gray-400 mb-6">Desbloqueie todo o mapa escolhendo seu nível de compromisso.</p>
-            
-            <div className="inline-block p-[2px] pixel-corners bg-gradient-to-r from-red-500 to-orange-500 shadow-[0_0_15px_rgba(239,68,68,0.2)] animate-pulse">
-              <div className="pixel-corners bg-[#18181b] px-6 py-3 flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-                <span className="font-press-start text-xs sm:text-sm text-red-500 tracking-wider">⚠️ ALERTA DO SISTEMA:</span>
-                <span className="text-xl md:text-2xl text-gray-300">As Inscrições da <strong className="text-white">Season 1</strong> acabam em breve! Garanta seu plano fundador.</span>
+          <div className="text-center mb-16 max-w-4xl">
+            <h2 className="font-press-start text-2xl sm:text-4xl text-white mb-6">
+              ACESSO COMPLETO LIBERADO
+            </h2>
+            <div className="inline-block p-[2px] pixel-corners bg-gradient-to-r from-green-500 to-emerald-400 mb-8 shadow-[0_0_20px_rgba(52,211,153,0.3)]">
+              <div className="pixel-corners bg-[#18181b] px-8 py-4">
+                <span className="font-press-start text-lg sm:text-2xl text-green-400">TESTE GRATUITAMENTE POR 7 DIAS</span>
+              </div>
+            </div>
+            <p className="text-2xl text-gray-300 mb-10">
+              Não queremos o seu ouro agora. Queremos o seu progresso. 
+              Experimente todas as funções premium do PlayerOne sem pagar nada por uma semana inteira.
+            </p>
+
+            <Link href="/dashboard">
+              <RetroButton active className="scale-125 mb-10">DESBLOQUEAR TUDO AGORA »</RetroButton>
+            </Link>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mt-10">
+              <div className="bg-[#18181b] p-6 pixel-corners border-2 border-[#333]">
+                <h4 className="font-press-start text-[#ff6b6b] text-xs mb-4">MÁXIMO XP</h4>
+                <p className="text-gray-400">Acesso ilimitado a todos os módulos de hábitos, finanças e saúde.</p>
+              </div>
+              <div className="bg-[#18181b] p-6 pixel-corners border-2 border-[#333]">
+                <h4 className="font-press-start text-blue-400 text-xs mb-4">RANKING GLOBAL</h4>
+                <p className="text-gray-400">Sua jornada conta para o leaderboard oficial da Season 1.</p>
+              </div>
+              <div className="bg-[#18181b] p-6 pixel-corners border-2 border-[#333]">
+                <h4 className="font-press-start text-yellow-400 text-xs mb-4">CANCELAMENTO FÁCIL</h4>
+                <p className="text-gray-400">Zero compromisso. Cancele com um clique antes dos 7 dias se não gostar.</p>
               </div>
             </div>
           </div>
+        </section>
 
-          <div className="grid md:grid-cols-3 gap-8 w-full max-w-5xl">
-            {/* Plan 1 */}
-            <div className="p-[2px] pixel-corners bg-[#333333] hover:bg-[#555] transition-colors relative mt-4 md:mt-0">
-               <div className="pixel-corners bg-[#18181b] p-8 text-center flex flex-col h-full">
-                  <h3 className="font-press-start text-gray-300 mb-6">INICIANTE</h3>
-                  <div className="text-5xl font-press-start mb-2">19<span className="text-xl">,90</span></div>
-                  <div className="text-xl text-gray-500 mb-8">reais por mês</div>
-                  <ul className="text-left text-gray-300 text-2xl space-y-4 mb-10 flex-1">
-                     <li className="flex gap-2"><span>✔</span> XP & Leveling padrão</li>
-                     <li className="flex gap-2"><span>✔</span> 1 Módulo Ativo por vez</li>
-                     <li className="flex gap-2 text-gray-500"><span>✘</span> Sem Ranking Global</li>
-                  </ul>
-                  <StripeCheckoutButton planId="iniciante">SELECIONAR</StripeCheckoutButton>
-               </div>
-            </div>
-
-            {/* Plan 2 */}
-            <div className="p-[4px] pixel-corners bg-gradient-to-b from-[#ff6b6b] to-purple-600 scale-100 md:scale-110 shadow-2xl shadow-[#ff6b6b]/20 relative z-10 transition-transform">
-               <div className="pixel-corners bg-[#111111] p-8 text-center flex flex-col h-full relative">
-                  <div className="absolute top-0 right-0 bg-[#ff6b6b] text-white text-xs px-2 py-1 font-press-start pixel-corners translate-x-2 -translate-y-2 animate-bounce">MAIS VENDIDO</div>
-                  <h3 className="font-press-start text-[#ff6b6b] mb-6">HERÓI</h3>
-                  <div className="text-5xl font-press-start mb-2 text-white">49<span className="text-xl">,90</span></div>
-                  <div className="text-xl text-gray-500 mb-8">reais por mês</div>
-                  <ul className="text-left text-gray-300 text-2xl space-y-4 mb-10 flex-1">
-                     <li className="flex gap-2 text-white"><span>✔</span> Todos os 3 Módulos</li>
-                     <li className="flex gap-2 text-white"><span>✔</span> Missões Ilimitadas</li>
-                     <li className="flex gap-2 text-white"><span>✔</span> Acesso ao Ranking Global</li>
-                     <li className="flex gap-2 text-white"><span>✔</span> Analytics Detalhados</li>
-                  </ul>
-                  <StripeCheckoutButton active planId="heroi">OBTER AGORA</StripeCheckoutButton>
-               </div>
-            </div>
-
-            {/* Plan 3 */}
-            <div className="p-[2px] pixel-corners bg-[#333333] hover:bg-[#555] transition-colors relative mt-4 md:mt-0">
-               <div className="pixel-corners bg-[#18181b] p-8 text-center flex flex-col h-full">
-                  <h3 className="font-press-start text-yellow-500 mb-6">LENDA</h3>
-                  <div className="text-5xl font-press-start mb-2">99<span className="text-xl">,90</span></div>
-                  <div className="text-xl text-gray-500 mb-8">reais por mês</div>
-                  <ul className="text-left text-gray-300 text-2xl space-y-4 mb-10 flex-1">
-                     <li className="flex gap-2"><span>✔</span> Tudo do plano Herói</li>
-                     <li className="flex gap-2 text-yellow-300"><span>✔</span> Insights com Inteligência Artificial</li>
-                     <li className="flex gap-2 text-yellow-300"><span>✔</span> Conquistas e Insígnias Exclusivas</li>
-                  </ul>
-                  <StripeCheckoutButton planId="lenda">SELECIONAR</StripeCheckoutButton>
-               </div>
-            </div>
-          </div>
-
-          {/* --- Trust Badge / Guarantee --- */}
-          <div className="mt-16 w-full max-w-3xl flex items-center gap-6 p-[2px] pixel-corners bg-gradient-to-r from-green-500 to-emerald-400 opacity-90 hover:opacity-100 transition-opacity">
+        {/* --- Trust Badge / Guarantee --- */}
+        <section className="w-full max-w-3xl px-4 py-10">
+          <div className="w-full flex items-center gap-6 p-[2px] pixel-corners bg-gradient-to-r from-green-500 to-emerald-400 opacity-90 hover:opacity-100 transition-opacity">
             <div className="pixel-corners bg-[#111] p-6 sm:p-8 flex flex-col sm:flex-row items-center text-center sm:text-left gap-6 w-full">
               <div className="text-6xl sm:animate-bounce">🛡️</div>
               <div>
-                <h3 className="font-press-start text-green-400 text-lg mb-3">RISCO ZERO: 7 DIAS DE TESTE</h3>
+                <h3 className="font-press-start text-green-400 text-lg mb-3">CONTRATO DO JOGADOR</h3>
                 <p className="text-gray-300 text-xl">
-                  Se você não sentir que a sua produtividade diária se transformou num jogo muito mais fácil em até 7 dias, devolvemos 100% da sua moeda de ouro. Sem letras miúdas.
+                  Se você não sentir que a sua produtividade se transformou num jogo em até 7 dias, você não paga nada. Sem letras miúdas.
                 </p>
               </div>
             </div>
@@ -248,10 +223,10 @@ export default function HomePage() {
                 CHEGA DE FAZER RESPAWN NA MESMA ROTINA
               </h2>
               <p className="text-2xl text-gray-400 mb-10 max-w-2xl">
-                Pare de ver as outras pessoas upando enquanto você fica pra trás. Crie sua conta, aperte start e escreva sua própria lenda hoje.
+                Pare de ver as outras pessoas upando enquanto você fica pra trás. Comece seu teste agora e escreva sua própria lenda.
               </p>
-              <Link href="#planos">
-                <RetroButton active className="scale-110">CLIQUE PARA DAR START</RetroButton>
+              <Link href="/dashboard">
+                <RetroButton active className="scale-110">CLIQUE PARA DAR START (GRÁTIS 7D)</RetroButton>
               </Link>
             </div>
           </div>

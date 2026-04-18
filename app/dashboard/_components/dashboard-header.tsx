@@ -6,7 +6,7 @@ import { LogOut, User, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
-export function DashboardHeader() {
+export function DashboardHeader({ userName, isGuest }: { userName?: string, isGuest?: boolean }) {
   const { data: session } = useSession() || {};
 
   return (
@@ -25,22 +25,35 @@ export function DashboardHeader() {
                   <div className="w-full h-full bg-gradient-to-br from-pink-500 to-orange-400 pixel-corners" />
                 </div>
                 <span className="font-press-start text-xs hidden sm:block text-gray-400 group-hover:text-white transition-colors">
-                  {session?.user?.name || 'Jogador'}
+                  {userName || 'Jogador'}
                 </span>
                 <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-white" />
               </div>
             </Link>
 
-            {/* Logout Button */}
-            <button
-              onClick={() => signOut({ callbackUrl: '/' })}
-              className="p-[2px] pixel-corners bg-[#333] hover:bg-[#ff6b6b] group transition-all active:scale-95"
-            >
-              <div className="pixel-corners bg-[#18181b] px-4 py-2 flex items-center gap-2 group-hover:bg-[#ff6b6b] transition-colors">
-                <LogOut className="w-4 h-4 text-gray-400 group-hover:text-white" />
-                <span className="text-gray-400 group-hover:text-white text-xl">Sair</span>
-              </div>
-            </button>
+            {/* Logout Button - Only show if not guest */}
+            {!isGuest && (
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="p-[2px] pixel-corners bg-[#333] hover:bg-[#ff6b6b] group transition-all active:scale-95"
+              >
+                <div className="pixel-corners bg-[#18181b] px-4 py-2 flex items-center gap-2 group-hover:bg-[#ff6b6b] transition-colors">
+                  <LogOut className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                  <span className="text-gray-400 group-hover:text-white text-xl">Sair</span>
+                </div>
+              </button>
+            )}
+
+            {/* Login Button for Guests */}
+            {isGuest && (
+              <Link href="/login">
+                <div className="p-[2px] pixel-corners bg-[#ff6b6b] hover:bg-[#ff8b8b] transition-all active:scale-95">
+                  <div className="pixel-corners bg-[#ff6b6b] px-4 py-2 flex items-center gap-2 transition-colors">
+                    <span className="text-white text-xl font-press-start text-[10px]">ENTRAR</span>
+                  </div>
+                </div>
+              </Link>
+            )}
           </div>
         </div>
       </div>

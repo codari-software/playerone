@@ -3,11 +3,15 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { Trophy, Medal, Award, Crown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
 export default async function LeaderboardPage() {
   const session = await getServerSession(authOptions);
+  const guestId = cookies().get('playerone_guest_id')?.value;
+  const currentUserId = (session?.user as any)?.id || guestId;
   
   const topPlayers = await prisma.user.findMany({
     orderBy: { xp: 'desc' },
@@ -15,13 +19,13 @@ export default async function LeaderboardPage() {
     select: {
       id: true,
       name: true,
+      nickname: true,
       xp: true,
       level: true,
       currentStreak: true,
     },
   });
 
-  const currentUserId = (session?.user as any)?.id;
 
   return (
     <div className="space-y-10">
@@ -67,7 +71,7 @@ export default async function LeaderboardPage() {
                       "font-press-start text-xs sm:text-sm uppercase whitespace-nowrap",
                       isCurrentUser ? "text-[#ff6b6b]" : "text-white"
                     )}>
-                      {player?.name || "Player Unknown"}
+                      {player?.nickname || player?.name || "Player Unknown"}
                     </span>
                     {isCurrentUser && (
                       <span className="font-press-start text-[8px] bg-[#ff6b6b]/20 text-[#ff6b6b] px-2 py-1 pixel-corners uppercase">

@@ -6,17 +6,21 @@ import { getLevelTitle, getXpProgress } from '@/lib/xp-system';
 import { cn } from '@/lib/utils';
 import { StripeCheckoutButton } from '@/components/StripeCheckoutButton';
 
+import { cookies } from 'next/headers';
+
 export const dynamic = 'force-dynamic';
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
+  const guestId = cookies().get('playerone_guest_id')?.value;
+  const userId = (session?.user as any)?.id || guestId;
   
-  if (!session?.user) {
+  if (!userId) {
     return null;
   }
 
   const user = await prisma.user.findUnique({
-    where: { id: (session.user as any).id },
+    where: { id: userId },
     include: {
       habits: true,
       financeTransactions: true,
@@ -95,9 +99,13 @@ export default async function ProfilePage() {
                   Plano Atual
                </div>
                
-               <div className="font-press-start text-4xl text-white uppercase tracking-widest">{user.plan}</div>
+               <div className="font-press-start text-4xl text-white uppercase tracking-widest">{user.isGuest ? 'EXPERIMENTAL' : user.plan}</div>
                
-               {user.plan === 'INICIANTE' ? (
+               {user.isGuest ? (
+                 <p className="font-vt323 text-2xl text-green-500/80 leading-tight">
+                   Você está no modo Experimental! Aproveite 7 dias de acesso total para testar todos os módulos.
+                 </p>
+               ) : user.plan === 'INICIANTE' ? (
                  <p className="font-vt323 text-2xl text-gray-500 leading-tight">
                    Seu status atual é limitado. Faça o upgrade para se tornar um Herói ou Lenda e desbloquear todos os módulos do sistema.
                  </p>
@@ -108,10 +116,10 @@ export default async function ProfilePage() {
                )}
             </div>
 
-            {user.plan === 'INICIANTE' && (
+            {(user.plan === 'INICIANTE' || user.isGuest) && (
               <div id="upgrade" className="mt-8 pt-8 border-t-2 border-[#222]">
                 <StripeCheckoutButton planId="heroi" active>
-                   DAR UPGRADE AGORA
+                   {user.isGuest ? 'GARANTIR ACESSO VITALÍCIO' : 'DAR UPGRADE AGORA'}
                 </StripeCheckoutButton>
               </div>
             )}

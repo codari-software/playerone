@@ -2,14 +2,15 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { getUserId } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user) {
+    const userId = await getUserId();
+    
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
 
     const transaction = await prisma.financeTransaction.create({
       data: {
-        userId: (session.user as any).id,
+        userId: userId,
         type,
         amount: parseFloat(amount),
         category,
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
 
     // CHECK FOR ACHIEVEMENTS
     const { checkAchievements } = await import('@/lib/achievements');
-    const unlockedAchievements = await checkAchievements((session.user as any).id);
+    const unlockedAchievements = await checkAchievements(userId);
 
     return NextResponse.json({
       ...transaction,

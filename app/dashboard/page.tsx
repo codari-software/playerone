@@ -9,19 +9,22 @@ import { RecentActivity } from './_components/recent-activity';
 import { LeaderboardWidget } from './_components/leaderboard-widget';
 import { getXpProgress, calculateLevel } from '@/lib/xp-system';
 
+import { cookies } from 'next/headers';
+import { SetupWizard } from './_components/setup-wizard';
+
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
+  const cookieStore = cookies();
+  const guestId = cookieStore.get('playerone_guest_id')?.value;
   
-  if (!session?.user) {
-    redirect('/login');
-  }
+  // Identifica o usuário: Sessão Logada ou Cookie de Convidado
+  const userId = (session?.user as any)?.id || guestId || null;
 
-  // Fetching data in parallel to improve performance
   const [user, topPlayers] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: (session.user as any).id },
+    userId ? prisma.user.findUnique({
+      where: { id: userId },
       include: {
         habits: {
           orderBy: { createdAt: 'desc' },
@@ -43,55 +46,56 @@ export default async function DashboardPage() {
           take: 3,
         },
       },
-    }),
+    }) : null,
     prisma.user.findMany({
       orderBy: { xp: 'desc' },
       take: 10,
       select: {
         id: true,
         name: true,
+        nickname: true,
         xp: true,
         level: true,
       },
     })
   ]);
 
-  if (!user) {
-    return (
-      <div className="p-[2px] pixel-corners bg-[#333]">
-        <div className="pixel-corners bg-[#18181b] p-10 text-center">
-          <p className="font-press-start text-[#ff6b6b]">ERRO: PERSONAGEM NÃO ENCONTRADO</p>
-          <Link href="/login" className="mt-4 inline-block text-xl underline text-gray-400">Voltar ao Login</Link>
-        </div>
-      </div>
-    );
-  }
+  // Se não tiver usuário (Convidado Novo) ou não tiver nickname/tutorial, mostra o setup
+  const needsSetup = !user || !user.nickname || !user.hasCompletedTutorial;
 
-  const xpProgress = getXpProgress(user.xp);
-  const currentLevel = calculateLevel(user.xp);
+  const xpProgress = getXpProgress(user?.xp || 0);
+  const currentLevel = calculateLevel(user?.xp || 0);
 
   return (
-    <div className="space-y-10">
-      <div>
-        <h1 className="font-press-start text-white text-2xl mb-4 leading-relaxed">
-          BEM-VINDO DE VOLTA, <span className="text-[#ff6b6b]">{user.name}</span>!
-        </h1>
-        <p className="text-2xl text-gray-400">Pronto para continuar sua jornada hoje?</p>
+    <div className="relative">
+      {needsSetup && <SetupWizard userEmail={user?.email || ''} />}
+      
+      <div className="space-y-10">
+        <div>
+          <h1 className="font-press-start text-white text-2xl mb-4 leading-relaxed">
+            BEM-VINDO DE VOLTA, <span className="text-[#ff6b6b]">{user?.nickname || user?.name || 'EXPLORADOR'}</span>!
+          </h1>
+          <p className="text-2xl text-gray-400">Pronto para continuar sua jornada hoje?</p>
+        </div>
+
+        {user && (
+          <>
+            <PlayerCard user={user} xpProgress={xpProgress} currentLevel={currentLevel} />
+
+            <div className="grid lg:grid-cols-2 gap-10">
+              <ModuleAccess user={user} />
+              <LeaderboardWidget topPlayers={topPlayers} currentUserId={user.id} />
+            </div>
+
+            <RecentActivity
+              habits={user.habits}
+              transactions={user.financeTransactions}
+              healthLogs={user.healthLogs}
+              achievements={user.userAchievements}
+            />
+          </>
+        )}
       </div>
-
-      <PlayerCard user={user} xpProgress={xpProgress} currentLevel={currentLevel} />
-
-      <div className="grid lg:grid-cols-2 gap-10">
-        <ModuleAccess user={user} />
-        <LeaderboardWidget topPlayers={topPlayers} currentUserId={user.id} />
-      </div>
-
-      <RecentActivity
-        habits={user.habits}
-        transactions={user.financeTransactions}
-        healthLogs={user.healthLogs}
-        achievements={user.userAchievements}
-      />
     </div>
   );
 }

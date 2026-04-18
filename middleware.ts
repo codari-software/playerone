@@ -23,19 +23,15 @@ export async function middleware(req: NextRequest) {
   // --- REGRA DE BLOQUEIO DO SIGNUP ---
   // Se estiver tentando acessar signup
   if (pathname === "/signup") {
-    // Só permite passar se tiver o cookie de compra ou já logado
-    if (!isAuth && !hasPurchaseCookie) {
-      console.log("Acesso negado ao signup: sem cookie de compra");
-      return NextResponse.redirect(new URL("/#planos", req.nextUrl.origin));
+    // Se já estiver logado, manda pro dashboard
+    if (isAuth) {
+      return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin));
     }
   }
 
-  // --- REGRA DE PROTEÇÃO DO DASHBOARD ---
-  if (pathname.startsWith("/dashboard")) {
-    if (!isAuth) {
-      return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
-    }
-  }
+  // --- REGRA DE PROTEÇÃO DO DASHBOARD REMOVIDA ---
+  // A verificação será feita dentro da página para permitir estados customizados
+
 
   return NextResponse.next();
 }

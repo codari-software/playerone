@@ -3,14 +3,15 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { calculateLevel } from '@/lib/xp-system';
+import { getUserId } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user) {
+    const userId = await getUserId();
+    
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
       where: { id: habitId },
     });
 
-    if (!habit || habit.userId !== (session.user as any).id) {
+    if (!habit || habit.userId !== userId) {
       return NextResponse.json({ error: 'Habit not found' }, { status: 404 });
     }
 
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
 
     // Get user
     const user = await prisma.user.findUnique({
-      where: { id: (session.user as any).id },
+      where: { id: userId },
     });
 
     if (!user) {

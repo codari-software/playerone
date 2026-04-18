@@ -5,19 +5,24 @@ import { Award, Lock, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+
 export const dynamic = 'force-dynamic';
 
 export default async function AchievementsPage() {
   const session = await getServerSession(authOptions);
+  const guestId = cookies().get('playerone_guest_id')?.value;
+  const userId = (session?.user as any)?.id || guestId;
   
-  if (!session?.user) {
-    return null;
+  if (!userId) {
+    redirect('/');
   }
 
   // Fetch user and all possible achievements in parallel
   const [user, allAchievements] = await Promise.all([
     prisma.user.findUnique({
-      where: { id: (session.user as any).id },
+      where: { id: userId },
       include: {
         userAchievements: {
           include: {
@@ -32,12 +37,9 @@ export default async function AchievementsPage() {
   ]);
 
   if (!user) {
-    return (
-      <div className="p-10 text-center">
-        <p className="font-press-start text-[#ff6b6b]">ERRO: USUÁRIO NÃO ENCONTRADO</p>
-      </div>
-    );
+    redirect('/');
   }
+
 
   const unlockedIds = new Set(user.userAchievements?.map?.((ua: any) => ua?.achievementId) ?? []);
 

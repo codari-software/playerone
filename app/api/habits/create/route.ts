@@ -3,13 +3,15 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
+import { getUserId } from '@/lib/session';
+
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const userId = await getUserId();
 
-    if (!session?.user) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -22,7 +24,7 @@ export async function POST(request: Request) {
 
     const habit = await prisma.habit.create({
       data: {
-        userId: (session.user as any).id,
+        userId: userId,
         name,
         description: description ?? '',
         xpReward: xpReward ?? 10,

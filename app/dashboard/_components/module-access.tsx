@@ -11,7 +11,7 @@ interface ModuleAccessProps {
 
 export function ModuleAccess({ user }: ModuleAccessProps) {
   const plan = user?.plan ?? 'INICIANTE';
-  const canAccessAll = plan === 'HERO' || plan === 'LEGEND';
+  const canAccessAll = plan === 'HERO' || plan === 'LEGEND' || user?.isGuest;
 
   const modules = [
     {

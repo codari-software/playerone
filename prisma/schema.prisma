@@ -33,6 +33,7 @@ model User {
   financeTransactions FinanceTransaction[]
   healthLogs          HealthLog[]
   userAchievements    UserAchievement[]
+  recurringBills      RecurringBill[]
   sessions            Session[]
   accounts            Account[]
 }
@@ -174,4 +175,17 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model RecurringBill {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  amount      Float
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
 }

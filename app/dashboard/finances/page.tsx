@@ -6,6 +6,7 @@ import { DollarSign, TrendingUp, TrendingDown, Wallet } from 'lucide-react';
 import { TransactionList } from './_components/transaction-list';
 import { AddTransactionButton } from './_components/add-transaction-button';
 import { FinanceChart } from './_components/finance-chart';
+import { RecurringBills } from './_components/recurring-bills';
 import { formatCurrency, cn } from '@/lib/utils';
 import { startOfMonth, endOfMonth } from 'date-fns';
 
@@ -28,6 +29,9 @@ export default async function FinancesPage() {
       financeTransactions: {
         orderBy: { date: 'desc' },
       },
+      recurringBills: {
+        orderBy: { updatedAt: 'desc' }
+      }
     },
   });
 
@@ -128,6 +132,10 @@ export default async function FinancesPage() {
                <TransactionList transactions={currentMonthTransactions} />
             </div>
          </div>
+      </div>
+
+      <div className="animate-in fade-in duration-1000 delay-300">
+         <RecurringBills bills={user.recurringBills ?? []} />
       </div>
     </div>
   );

@@ -105,11 +105,9 @@ export function SignupForm() {
       </div>
 
       <div className="pt-2">
-        <button type="submit" disabled={isLoading} className="w-full">
-          <RetroButton active className="w-full">
-            {isLoading ? 'CRIANDO PERSONAGEM...' : 'INICIAR AVENTURA'}
-          </RetroButton>
-        </button>
+        <RetroButton type="submit" active className="w-full" disabled={isLoading}>
+          {isLoading ? 'CRIANDO PERSONAGEM...' : 'INICIAR AVENTURA'}
+        </RetroButton>
       </div>
     </form>
   );

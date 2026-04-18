@@ -75,15 +75,9 @@ export function LoginForm() {
       </div>
 
       <div className="pt-2">
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full"
-        >
-          <RetroButton active className="w-full">
-            {isLoading ? 'LOGIN NO SERVIDOR...' : 'ENTRAR NO JOGO'}
-          </RetroButton>
-        </button>
+        <RetroButton type="submit" active className="w-full" disabled={isLoading}>
+          {isLoading ? 'LOGIN NO SERVIDOR...' : 'ENTRAR NO JOGO'}
+        </RetroButton>
       </div>
     </form>
   );

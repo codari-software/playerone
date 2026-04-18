@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { Crown, Zap, Flame, Trophy, Star, Mail, IdCard, Wallet, Sparkles } from 'lucide-react';
+import { Crown, Zap, Flame, Trophy, Star, IdCard, Wallet, Sparkles } from 'lucide-react';
 import { getLevelTitle, getXpProgress } from '@/lib/xp-system';
 import { cn } from '@/lib/utils';
 import { StripeCheckoutButton } from '@/components/StripeCheckoutButton';

@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
-import { DashboardNav } from './_components/dashboard-nav';
+import { DashboardNav, MobileNav } from './_components/dashboard-nav';
 import { DashboardHeader } from './_components/dashboard-header';
 import { TrialExpiredModal } from './_components/trial-expired-modal';
 import { cn } from '@/lib/utils';
@@ -63,6 +63,7 @@ export default async function DashboardLayout({
         isTrialExpired && "blur-sm pointer-events-none select-none opacity-50"
       )}>
         <DashboardNav />
+        <MobileNav />
         <main className="flex-1 p-4 md:p-8 min-h-[calc(100vh-4rem)] w-full">
           <div className="w-full">
             {children}

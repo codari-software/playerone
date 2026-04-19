@@ -24,6 +24,18 @@ model User {
   lastActiveAt  DateTime  @default(now())
   plan          Plan      @default(INICIANTE)
   activeModule  Module?
+  
+  // RPG Stats
+  energy        Int       @default(100)
+  maxEnergy     Int       @default(100)
+  power         Int       @default(10)
+  strength      Int       @default(5)
+  intelligence  Int       @default(5)
+  constitution  Int       @default(5)
+  willpower     Int       @default(5)
+  
+  characterClass CharacterClass?
+  
   nickname      String?   @unique
   hasCompletedTutorial Boolean @default(false)
   createdAt     DateTime  @default(now())
@@ -32,11 +44,18 @@ model User {
   habits              Habit[]
   financeTransactions FinanceTransaction[]
   healthLogs          HealthLog[]
+  workouts           Workout[]
   userAchievements    UserAchievement[]
   recurringBills      RecurringBill[]
   inventory           UserItem[]
   sessions            Session[]
   accounts            Account[]
+}
+
+enum CharacterClass {
+  WARRIOR
+  MAGE
+  ARCHER
 }
 
 enum Plan {
@@ -64,9 +83,22 @@ model Habit {
   completedAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  logs        HabitLog[]
 
   @@index([userId])
 }
+
+model HabitLog {
+  id        String   @id @default(cuid())
+  habitId   String
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  completed Boolean  @default(true)
+
+  @@index([habitId])
+  @@index([date])
+}
+
 
 enum Frequency {
   DAILY
@@ -114,6 +146,37 @@ enum HealthType {
   EXERCISE
   WATER
   SLEEP
+}
+
+model Workout {
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String     // Ex: Treino A, Peito e Triceps
+  date        DateTime   @default(now())
+  exercises   Exercise[]
+  createdAt   DateTime   @default(now())
+
+  @@index([userId])
+}
+
+model Exercise {
+  id          String   @id @default(cuid())
+  workoutId   String
+  workout     Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  name        String
+  sets        Set[]
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Set {
+  id          String   @id @default(cuid())
+  exerciseId  String
+  exercise    Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  reps        Int?
+  weight      Float?
+  isCompleted Boolean  @default(false)
 }
 
 model Achievement {

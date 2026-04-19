@@ -66,6 +66,19 @@ export async function saveNickname(nickname: string) {
   return { success: true };
 }
 
+export async function saveCharacterClass(characterClass: 'WARRIOR' | 'MAGE' | 'ARCHER') {
+  const userId = await getUserId();
+  if (!userId) throw new Error('Unauthorized');
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { characterClass },
+  });
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}
+
 export async function completeTutorial() {
   const userId = await getUserId();
 
@@ -108,3 +121,76 @@ export async function resetExpiration() {
   revalidatePath('/dashboard');
   return { success: true };
 }
+
+export async function toggleHabitDay(habitId: string, day: number) {
+  const userId = await getUserId();
+  if (!userId) return { error: 'Unauthorized' };
+
+  // Pegar data do dia solicitado (mês atual)
+  const date = new Date();
+  date.setDate(day);
+  date.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  // Verificar se já existe log para esse hábito neste dia
+  const existingLog = await prisma.habitLog.findFirst({
+    where: {
+      habitId,
+      date: {
+        gte: date,
+        lte: endOfDay,
+      },
+    },
+  });
+
+  if (existingLog) {
+    // Se existe, apaga (desmarcar)
+    await prisma.habitLog.delete({
+      where: { id: existingLog.id },
+    });
+    
+    // Opcional: remover XP (mas por enquanto vamos deixar)
+  } else {
+    // Se não existe, cria (marcar)
+    await prisma.habitLog.create({
+      data: {
+        habitId,
+        date,
+      },
+    });
+
+    // Dar recompensa de XP
+    const habit = await prisma.habit.findUnique({
+      where: { id: habitId },
+      select: { xpReward: true }
+    });
+
+    if (habit) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { xp: { increment: habit.xpReward } }
+      });
+    }
+  }
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}
+
+export async function deleteHabit(habitId: string) {
+  const userId = await getUserId();
+  if (!userId) throw new Error('Unauthorized');
+
+  await prisma.habit.delete({
+    where: { 
+      id: habitId,
+      userId: userId // Garantir que pertence ao usuário
+    },
+  });
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}
+

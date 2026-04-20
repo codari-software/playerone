@@ -139,60 +139,62 @@ export async function resetExpiration() {
 }
 
 export async function toggleHabitDay(habitId: string, day: number) {
-  const userId = await getUserId();
-  if (!userId) return { error: 'Unauthorized' };
+  try {
+    const userId = await getUserId();
+    if (!userId) return { error: 'Unauthorized' };
 
-  // Pegar data do dia solicitado (mês atual)
-  const date = new Date();
-  date.setDate(day);
-  date.setHours(0, 0, 0, 0);
+    // Pegar data do dia solicitado (mês atual)
+    const date = new Date();
+    date.setDate(day);
+    date.setHours(0, 0, 0, 0);
 
-  const endOfDay = new Date(date);
-  endOfDay.setHours(23, 59, 59, 999);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
 
-  // Verificar se já existe log para esse hábito neste dia
-  const existingLog = await prisma.habitLog.findFirst({
-    where: {
-      habitId,
-      date: {
-        gte: date,
-        lte: endOfDay,
-      },
-    },
-  });
-
-  if (existingLog) {
-    // Se existe, apaga (desmarcar)
-    await prisma.habitLog.delete({
-      where: { id: existingLog.id },
-    });
-    
-    // Opcional: remover XP (mas por enquanto vamos deixar)
-  } else {
-    // Se não existe, cria (marcar)
-    await prisma.habitLog.create({
-      data: {
+    // Verificar se já existe log para esse hábito neste dia
+    const existingLog = await prisma.habitLog.findFirst({
+      where: {
         habitId,
-        date,
+        date: {
+          gte: date,
+          lte: endOfDay,
+        },
       },
     });
 
-    // Dar recompensa de XP
-    const habit = await prisma.habit.findUnique({
-      where: { id: habitId },
-      select: { xpReward: true }
-    });
-
-    if (habit) {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { xp: { increment: habit.xpReward } }
+    if (existingLog) {
+      await prisma.habitLog.delete({
+        where: { id: existingLog.id },
       });
-    }
-  }
+    } else {
+      await prisma.habitLog.create({
+        data: {
+          habitId,
+          date,
+        },
+      });
 
-  revalidatePath('/dashboard');
-  return { success: true };
+      // Dar recompensa de XP
+      const habit = await prisma.habit.findUnique({
+        where: { id: habitId },
+        select: { xpReward: true }
+      });
+
+      if (habit) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { xp: { increment: habit.xpReward } }
+        });
+      }
+    }
+
+    revalidatePath('/dashboard');
+    revalidatePath('/dashboard/bosses'); // Bosses dependem de hábitos concluídos
+    return { success: true };
+  } catch (error) {
+    console.error('Error toggling habit:', error);
+    return { error: 'Falha ao salvar no banco de dados.' };
+  }
 }
 
 export async function deleteHabit(habitId: string) {

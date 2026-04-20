@@ -8,9 +8,11 @@ interface RPGPlayerCardProps {
   user: any;
   xpProgress: {
     currentLevel: number;
-    xpIntoLevel: number;
+    nextLevel: number;
+    xpForCurrentLevel: number;
     xpForNextLevel: number;
     progressPercentage: number;
+    xpNeeded: number;
   };
 }
 

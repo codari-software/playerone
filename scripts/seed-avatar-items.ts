@@ -14,6 +14,7 @@ async function main() {
     { name: 'Lâmina de Aço', type: 'WEAPON', priceXP: 300, rarity: 'RARE' },
     { name: 'Excalibur Pixelada', type: 'WEAPON', priceXP: 1500, rarity: 'EPIC' },
 
+    /*
     // SHIELDS
     { name: 'Escudo de Tábua', type: 'SHIELD', priceXP: 100, rarity: 'COMMON' },
     { name: 'Brasão do Reino', type: 'SHIELD', priceXP: 600, rarity: 'RARE' },
@@ -22,6 +23,7 @@ async function main() {
     // HATS
     { name: 'Elmo de Ferro', type: 'HAT', priceXP: 150, rarity: 'COMMON' },
     { name: 'Coroa do Rei', type: 'HAT', priceXP: 3000, rarity: 'LEGENDARY' },
+    */
   ];
 
   for (const item of items) {

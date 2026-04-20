@@ -111,7 +111,7 @@ export function AvatarStore({ items: initialItems, userXP, gender }: AvatarStore
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-4 border-b-2 border-[#222] pb-6">
-        {['ALL', 'SKIN', 'WEAPON', 'SHIELD', 'HAT'].map((f) => (
+        {['ALL', 'SKIN', 'WEAPON'].map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}

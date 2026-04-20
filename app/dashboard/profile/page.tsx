@@ -51,8 +51,11 @@ export default async function ProfilePage() {
   const xpProgress = getXpProgress(user.xp);
   const title = getLevelTitle(user.level);
 
-  // Get all potential shop items
+  // Get all potential shop items (Filter only SKIN and WEAPON for MVP)
   const allItems = await prisma.avatarItem.findMany({
+    where: {
+      type: { in: ['SKIN', 'WEAPON'] }
+    },
     orderBy: { priceXP: 'asc' }
   });
 

@@ -1,4 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -96,7 +97,7 @@ async function main() {
     // Seed objectives for this boss
     for (const obj of objectives) {
       await prisma.bossObjective.upsert({
-        where: { id: `${boss.id}-${obj.description}` }, // Unique identifier for seed
+        where: { id: `${boss.id}-${obj.description}` },
         update: { ...obj, bossId: boss.id },
         create: { ...obj, bossId: boss.id, id: `${boss.id}-${obj.description}` },
       });
@@ -114,3 +115,5 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+export {};

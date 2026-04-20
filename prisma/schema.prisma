@@ -52,6 +52,7 @@ model User {
   inventory           UserItem[]
   sessions            Session[]
   accounts            Account[]
+  notes               Note[]
 }
 
 enum CharacterClass {
@@ -286,4 +287,17 @@ enum ItemType {
   WEAPON
   SHIELD
   HAT
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  category  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

@@ -210,3 +210,34 @@ export async function deleteHabit(habitId: string) {
   return { success: true };
 }
 
+export async function saveNote(title: string, content: string, category: string) {
+  const userId = await getUserId();
+  if (!userId) throw new Error('Unauthorized');
+
+  await prisma.note.create({
+    data: {
+      userId,
+      title,
+      content,
+      category
+    },
+  });
+
+  revalidatePath('/dashboard/lore');
+  return { success: true };
+}
+
+export async function deleteNote(noteId: string) {
+  const userId = await getUserId();
+  if (!userId) throw new Error('Unauthorized');
+
+  await prisma.note.delete({
+    where: { 
+      id: noteId,
+      userId: userId
+    },
+  });
+
+  revalidatePath('/dashboard/lore');
+  return { success: true };
+}

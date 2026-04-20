@@ -12,12 +12,14 @@ import {
   Award,
   User,
   Dumbbell,
+  FileText,
 } from 'lucide-react';
 
 const navItems = [
   { name: 'Início', href: '/dashboard', icon: Home },
   { name: 'Finanças', href: '/dashboard/finances', icon: DollarSign },
   { name: 'Treino', href: '/dashboard/workout', icon: Dumbbell },
+  { name: 'Lore & Notas', href: '/dashboard/lore', icon: FileText },
   { name: 'Conquistas', href: '/dashboard/achievements', icon: Award },
   { name: 'Leaderboard', href: '/dashboard/leaderboard', icon: Trophy },
   { name: 'Perfil', href: '/dashboard/profile', icon: User },

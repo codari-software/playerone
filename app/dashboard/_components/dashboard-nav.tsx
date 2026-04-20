@@ -13,6 +13,7 @@ import {
   User,
   Dumbbell,
   FileText,
+  Droplets,
 } from 'lucide-react';
 
 const navItems = [
@@ -20,6 +21,7 @@ const navItems = [
   { name: 'Finanças', href: '/dashboard/finances', icon: DollarSign },
   { name: 'Treino', href: '/dashboard/workout', icon: Dumbbell },
   { name: 'Lore & Notas', href: '/dashboard/lore', icon: FileText },
+  { name: 'Água', href: '/dashboard/water', icon: Droplets },
   { name: 'Conquistas', href: '/dashboard/achievements', icon: Award },
   { name: 'Leaderboard', href: '/dashboard/leaderboard', icon: Trophy },
   { name: 'Perfil', href: '/dashboard/profile', icon: User },

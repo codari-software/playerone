@@ -227,6 +227,44 @@ export async function saveNote(title: string, content: string, category: string)
   return { success: true };
 }
 
+export async function updateUserWeight(weight: number) {
+  const userId = await getUserId();
+  if (!userId) throw new Error('Unauthorized');
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { weight },
+  });
+
+  revalidatePath('/dashboard/water');
+  return { success: true };
+}
+
+export async function logWaterIntake(amountMl: number) {
+  const userId = await getUserId();
+  if (!userId) throw new Error('Unauthorized');
+
+  await prisma.healthLog.create({
+    data: {
+      userId,
+      type: 'WATER',
+      value: amountMl,
+      unit: 'ml',
+      description: `Bebeu ${amountMl}ml de água`,
+      xpEarned: 10
+    },
+  });
+
+  // Recompensa de XP
+  await prisma.user.update({
+    where: { id: userId },
+    data: { xp: { increment: 10 } }
+  });
+
+  revalidatePath('/dashboard/water');
+  return { success: true };
+}
+
 export async function deleteNote(noteId: string) {
   const userId = await getUserId();
   if (!userId) throw new Error('Unauthorized');

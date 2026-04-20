@@ -25,7 +25,7 @@ export function CharacterDisplay({ equipped, skinUrl, weaponUrl }: CharacterDisp
                    skin?.id === 'sombra-da-noite' ? 'bg-gray-800' : 'bg-[#f8d5b4]'; // Light skin default
 
   return (
-    <div className="relative w-80 h-96 flex flex-col items-center justify-center animate-in fade-in duration-1000">
+    <div className="relative w-80 h-[400px] flex-shrink-0 flex flex-col items-center justify-center animate-in fade-in duration-1000 overflow-visible">
       {/* Background Glow */}
       <div className={cn(
         "absolute inset-0 blur-[100px] opacity-20 rounded-full",
@@ -33,37 +33,14 @@ export function CharacterDisplay({ equipped, skinUrl, weaponUrl }: CharacterDisp
       )} />
 
       {skinUrl ? (
-        <div className="relative w-80 h-96 z-10 transition-all duration-700">
+        <div className="relative w-full h-full z-10 transition-opacity duration-300">
           <Image 
             src={skinUrl} 
             alt="Character" 
             fill
-            className="object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+            priority
+            className="object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
           />
-          
-          {/* Weapon Overlay */}
-          <div className="absolute top-[20%] -right-8 z-30 animate-bounce-slow">
-             {hasWeapon && (
-                <div className="p-4 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
-                   {weaponUrl ? (
-                      <div className="relative w-16 h-16">
-                        <Image src={weaponUrl} alt="Weapon" fill className="object-contain" />
-                      </div>
-                   ) : (
-                      <SwordIcon className="w-16 h-16 text-gray-300 drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]" />
-                   )}
-                </div>
-             )}
-          </div>
-
-          {/* Shield Overlay */}
-          <div className="absolute top-[20%] -left-8 z-30">
-             {hasShield && (
-                <div className="p-4 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
-                   <Shield className="w-16 h-16 text-gray-400 drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]" />
-                </div>
-             )}
-          </div>
         </div>
       ) : (
         /* CHARACTER BODY FALLBACK (Pixel Art Style) */
@@ -106,28 +83,6 @@ export function CharacterDisplay({ equipped, skinUrl, weaponUrl }: CharacterDisp
              <div className="absolute bottom-[-10px] right-0 w-10 h-5 bg-black pixel-corners" />
           </div>
 
-          {/* WEAPON & SHIELD OVERLAYS (Fallback Mode) */}
-          <div className="absolute top-[20%] -right-16 z-30 animate-bounce-slow">
-             {hasWeapon && (
-                <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
-                   {weaponUrl ? (
-                      <div className="relative w-12 h-12">
-                        <Image src={weaponUrl} alt="Weapon" fill className="object-contain" />
-                      </div>
-                   ) : (
-                      <SwordIcon className="w-10 h-10 text-gray-300 drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]" />
-                   )}
-                </div>
-             )}
-          </div>
-
-          <div className="absolute top-[20%] -left-16 z-30">
-             {hasShield && (
-                <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm border border-white/20">
-                   <Shield className="w-10 h-10 text-gray-400 drop-shadow-[0_4px_0_rgba(0,0,0,0.5)]" />
-                </div>
-             )}
-          </div>
         </div>
       )}
 

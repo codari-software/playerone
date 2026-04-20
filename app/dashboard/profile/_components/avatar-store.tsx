@@ -51,6 +51,12 @@ export function AvatarStore({ items: initialItems, userXP, gender }: AvatarStore
       if (item.name === 'Espada de Madeira') {
         return `/images/items/weapons/espada_madeira.png`;
       }
+      if (item.name === 'Lâmina de Aço') {
+        return `/images/items/weapons/lamina_aco.png`;
+      }
+      if (item.name === 'Excalibur Pixelada') {
+        return `/images/items/weapons/excalibur_pixelada.png`;
+      }
     }
     // Fallback para ícones ou outras imagens
     return null;
@@ -86,9 +92,14 @@ export function AvatarStore({ items: initialItems, userXP, gender }: AvatarStore
         body: JSON.stringify({ itemId }),
       });
 
-      if (!res.ok) throw new Error('Erro ao equipar');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erro ao equipar');
 
-      toast.success('Equipamento pronto!');
+      if (data.action === 'unequipped') {
+        toast.success('Item removido!');
+      } else {
+        toast.success('Equipamento pronto!');
+      }
       router.refresh();
     } catch (error: any) {
       toast.error(error.message);
@@ -171,15 +182,22 @@ export function AvatarStore({ items: initialItems, userXP, gender }: AvatarStore
                   {item.isUnlocked ? (
                     <button
                       onClick={() => handleEquip(item.id)}
-                      disabled={isLoading === item.id || item.isEquipped}
+                      disabled={isLoading === item.id || (item.isEquipped && item.type === 'SKIN')}
                       className={cn(
-                        "w-full py-4 font-press-start text-[10px] pixel-corners transition-all",
-                        item.isEquipped 
-                          ? "bg-green-500/20 text-green-500 cursor-default" 
+                        "w-full py-4 font-press-start text-[10px] pixel-corners transition-all group/btn",
+                        item.isEquipped && item.type !== 'SKIN'
+                          ? "bg-green-500/20 text-green-500 hover:bg-red-500/20 hover:text-red-500" 
+                          : item.isEquipped
+                          ? "bg-green-500/20 text-green-500 cursor-default"
                           : "bg-blue-500 text-white hover:bg-blue-600 active:scale-95"
                       )}
                     >
-                      {item.isEquipped ? 'EQUIPADO' : 'EQUIPAR'}
+                      {item.isEquipped && item.type !== 'SKIN' ? (
+                        <>
+                          <span className="group-hover/btn:hidden">EQUIPADO</span>
+                          <span className="hidden group-hover/btn:inline">DESEQUIPAR</span>
+                        </>
+                      ) : item.isEquipped ? 'EQUIPADO' : 'EQUIPAR'}
                     </button>
                   ) : (
                     <button

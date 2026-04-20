@@ -16,6 +16,15 @@ export async function POST(request: Request) {
 
     if (!userItem) return NextResponse.json({ error: 'Item não encontrado no seu inventário' }, { status: 404 });
 
+    // Se já estiver equipado e não for uma SKIN, desequipa (toggle)
+    if (userItem.isEquipped && userItem.item.type !== 'SKIN') {
+      await prisma.userItem.update({
+        where: { id: userItem.id },
+        data: { isEquipped: false }
+      });
+      return NextResponse.json({ success: true, action: 'unequipped' });
+    }
+
     // Unequip others of same type
     await prisma.userItem.updateMany({
       where: {

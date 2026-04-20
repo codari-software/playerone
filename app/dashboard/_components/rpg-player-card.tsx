@@ -20,26 +20,55 @@ export function RPGPlayerCard({ user, xpProgress }: RPGPlayerCardProps) {
     : [];
     
   const equippedSkin = equippedItems.find((i: any) => i.type === 'SKIN');
+  const equippedWeapon = equippedItems.find((i: any) => i.type === 'WEAPON');
   
   let skinUrl = null;
+  let displayWeaponUrl = null;
+
   if (equippedSkin) {
-    const isPaid = equippedSkin.name === 'Guerreiro Padrão' || equippedSkin.priceXP > 0; // Simple logic for now
+    const skinNames: Record<string, string> = {
+      'Guerreiro Padrão': 'guerreiro_padrao.png',
+      'Mago das Chamas': 'mago_chamas.png',
+      'Sombra da Noite': 'sombra_noite.png',
+      'Paladino de Ouro': 'paladino_ouro.png'
+    };
+
+    const weaponSlugs: Record<string, string> = {
+      'Espada de Madeira': 'espada_madeira',
+      'Lâmina de Aço': 'lamina_aco',
+      'Excalibur Pixelada': 'excalibur_pixelada'
+    };
+
+    const skinFilename = skinNames[equippedSkin.name] || equippedSkin.imageUrl || `${equippedSkin.id}.png`;
+    const isPaid = !!skinNames[equippedSkin.name] || (equippedSkin.priceXP && equippedSkin.priceXP > 0);
     const folder = isPaid ? 'paid' : 'free';
-    const filename = 
-      equippedSkin.name === 'Guerreiro Padrão' ? 'guerreiro_padrao.png' : 
-      equippedSkin.name === 'Mago das Chamas' ? 'mago_chamas.png' : 
-      equippedSkin.name === 'Sombra da Noite' ? 'sombra_noite.png' : 
-      equippedSkin.name === 'Paladino de Ouro' ? 'paladino_ouro.png' : 
-      equippedSkin.imageUrl || `${equippedSkin.id}.png`;
-    skinUrl = `/images/skins/${folder}/${user.gender || 'male'}/${filename}`;
+    const gender = user.gender || 'male';
+    const weaponSlug = equippedWeapon ? weaponSlugs[equippedWeapon.name] : null;
+
+    if (weaponSlug) {
+      // Tentar usar imagem integrada: /images/skins/{folder}/{gender}/items/weapons/{weaponSlug}/{skinFilename}
+      skinUrl = `/images/skins/${folder}/${gender}/items/weapons/${weaponSlug}/${skinFilename}`;
+      displayWeaponUrl = null; // A arma já está na imagem da skin
+    } else {
+      // Skin normal sem arma integrada
+      skinUrl = `/images/skins/${folder}/${gender}/${skinFilename}`;
+      displayWeaponUrl = null;
+    }
   } else if (user.characterSkin && user.gender) {
     skinUrl = `/images/skins/free/${user.gender}/${user.characterSkin}`;
   }
 
-  const equippedWeapon = equippedItems.find((i: any) => i.type === 'WEAPON');
-  const weaponUrl = equippedWeapon?.name === 'Espada de Madeira' 
-    ? '/images/items/weapons/espada_madeira.png' 
-    : null;
+  // Se não houver skinUrl integrada ou se for uma arma sem skin compatível, 
+  // poderíamos usar o overlay antigo, mas o usuário pediu para usar as novas imagens.
+  // Vou manter o overlay apenas se não houver skin equipada (o que é raro) 
+  // ou se a arma não tiver slug mapeado.
+  if (!displayWeaponUrl && equippedWeapon && !skinUrl?.includes('/items/weapons/')) {
+    displayWeaponUrl = 
+      equippedWeapon.name === 'Espada de Madeira' ? '/images/items/weapons/espada_madeira.png' :
+      equippedWeapon.name === 'Lâmina de Aço' ? '/images/items/weapons/lamina_aco.png' :
+      equippedWeapon.name === 'Excalibur Pixelada' ? '/images/items/weapons/excalibur_pixelada.png' :
+      null;
+  }
 
   return (
     <div className="p-[2px] pixel-corners bg-gradient-to-r from-[#ff6b6b] via-purple-500 to-blue-500 animate-in fade-in slide-in-from-top duration-700">
@@ -51,7 +80,7 @@ export function RPGPlayerCard({ user, xpProgress }: RPGPlayerCardProps) {
               <CharacterDisplay 
                 equipped={equippedItems} 
                 skinUrl={skinUrl} 
-                weaponUrl={weaponUrl}
+                weaponUrl={displayWeaponUrl}
               />
             </div>
           </div>

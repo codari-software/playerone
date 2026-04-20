@@ -61,7 +61,9 @@ export default async function ProfilePage() {
     .map(ui => ({
       id: ui.item.id,
       name: ui.item.name,
-      type: ui.item.type as 'SKIN' | 'WEAPON' | 'SHIELD' | 'HAT'
+      type: ui.item.type as 'SKIN' | 'WEAPON' | 'SHIELD' | 'HAT',
+      priceXP: ui.item.priceXP,
+      imageUrl: ui.item.imageUrl
     }));
 
   const storeItems = allItems.map(item => {
@@ -98,22 +100,56 @@ export default async function ProfilePage() {
                     equipped={equippedItems} 
                     skinUrl={(() => {
                       const equippedSkin = equippedItems.find(i => i.type === 'SKIN');
+                      const equippedWeapon = equippedItems.find(i => i.type === 'WEAPON');
+                      
                       if (equippedSkin) {
-                        const isPaid = equippedSkin.name === 'Guerreiro Padrão' || equippedSkin.priceXP > 0;
+                        const skinNames: Record<string, string> = {
+                          'Guerreiro Padrão': 'guerreiro_padrao.png',
+                          'Mago das Chamas': 'mago_chamas.png',
+                          'Sombra da Noite': 'sombra_noite.png',
+                          'Paladino de Ouro': 'paladino_ouro.png'
+                        };
+
+                        const weaponSlugs: Record<string, string> = {
+                          'Espada de Madeira': 'espada_madeira',
+                          'Lâmina de Aço': 'lamina_aco',
+                          'Excalibur Pixelada': 'excalibur_pixelada'
+                        };
+
+                        const skinFilename = skinNames[equippedSkin.name] || equippedSkin.imageUrl || `${equippedSkin.id}.png`;
+                        const isPaid = !!skinNames[equippedSkin.name] || (equippedSkin.priceXP && equippedSkin.priceXP > 0);
                         const folder = isPaid ? 'paid' : 'free';
-                        const filename = 
-                          equippedSkin.name === 'Guerreiro Padrão' ? 'guerreiro_padrao.png' : 
-                          equippedSkin.name === 'Mago das Chamas' ? 'mago_chamas.png' : 
-                          equippedSkin.name === 'Sombra da Noite' ? 'sombra_noite.png' : 
-                          equippedSkin.name === 'Paladino de Ouro' ? 'paladino_ouro.png' : 
-                          equippedSkin.imageUrl || `${equippedSkin.id}.png`;
-                        return `/images/skins/${folder}/${user.gender || 'male'}/${filename}`;
+                        const gender = user.gender || 'male';
+                        const weaponSlug = equippedWeapon ? weaponSlugs[equippedWeapon.name] : null;
+
+                        if (weaponSlug) {
+                          return `/images/skins/${folder}/${gender}/items/weapons/${weaponSlug}/${skinFilename}`;
+                        }
+                        
+                        return `/images/skins/${folder}/${gender}/${skinFilename}`;
                       }
                       return user.characterSkin && user.gender ? `/images/skins/free/${user.gender}/${user.characterSkin}` : null;
                     })()}
                     weaponUrl={(() => {
+                      const equippedSkin = equippedItems.find(i => i.type === 'SKIN');
                       const equippedWeapon = equippedItems.find(i => i.type === 'WEAPON');
-                      return equippedWeapon?.name === 'Espada de Madeira' ? '/images/items/weapons/espada_madeira.png' : null;
+                      
+                      // Se temos uma skin e uma arma com slug, a arma já está na imagem da skin
+                      const weaponSlugs: Record<string, string> = {
+                        'Espada de Madeira': 'espada_madeira',
+                        'Lâmina de Aço': 'lamina_aco',
+                        'Excalibur Pixelada': 'excalibur_pixelada'
+                      };
+
+                      if (equippedSkin && equippedWeapon && weaponSlugs[equippedWeapon.name]) {
+                        return null;
+                      }
+
+                      // Caso contrário, usa o overlay antigo
+                      return equippedWeapon?.name === 'Espada de Madeira' ? '/images/items/weapons/espada_madeira.png' :
+                             equippedWeapon?.name === 'Lâmina de Aço' ? '/images/items/weapons/lamina_aco.png' :
+                             equippedWeapon?.name === 'Excalibur Pixelada' ? '/images/items/weapons/excalibur_pixelada.png' :
+                             null;
                     })()}
                   />
                </div>

@@ -100,6 +100,25 @@
       0px calc(100% - 4px)
     );
   }
+
+  .sidebar-scroll {
+    overflow-y: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  .sidebar-scroll::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  .sidebar-scroll:hover {
+    overflow-y: auto;
+    scrollbar-width: thin; /* Firefox */
+  }
+
+  .sidebar-scroll:hover::-webkit-scrollbar {
+    display: block; /* Chrome/Safari */
+  }
   
   .font-press-start {
     font-family: 'Press Start 2P', monospace !important;

@@ -279,3 +279,68 @@ export async function deleteNote(noteId: string) {
   revalidatePath('/dashboard/lore');
   return { success: true };
 }
+
+export async function defeatBoss(bossId: string) {
+  const userId = await getUserId();
+  if (!userId) throw new Error('Unauthorized');
+
+  const progress = await prisma.userBoss.findUnique({
+    where: { userId_bossId: { userId, bossId } },
+    include: { boss: true }
+  });
+
+  if (!progress || progress.status !== 'UNLOCKED') return { success: false };
+
+  await prisma.$transaction(async (tx) => {
+    // Marcar como derrotado
+    await tx.userBoss.update({
+      where: { id: progress.id },
+      data: { status: 'DEFEATED', lastDefeatedAt: new Date() }
+    });
+
+    // Dar recompensa
+    await tx.user.update({
+      where: { id: userId },
+      data: { xp: { increment: progress.boss.xpReward } }
+    });
+
+    // Desbloquear o próximo
+    const nextBoss = await tx.boss.findFirst({ 
+      where: { order: progress.boss.order + 1 } 
+    });
+
+    if (nextBoss) {
+      await tx.userBoss.upsert({
+        where: { userId_bossId: { userId, bossId: nextBoss.id } },
+        update: { status: 'UNLOCKED' },
+        create: { userId, bossId: nextBoss.id, status: 'UNLOCKED' }
+      });
+    }
+  });
+
+  revalidatePath('/dashboard/bosses');
+  return { success: true };
+}
+
+export async function toggleBossObjective(objectiveId: string) {
+  const userId = await getUserId();
+  if (!userId) throw new Error('Unauthorized');
+
+  const existing = await prisma.userBossObjective.findUnique({
+    where: { userId_objectiveId: { userId, objectiveId } }
+  });
+
+  if (existing) {
+    await prisma.userBossObjective.update({
+      where: { id: existing.id },
+      data: { isCompleted: !existing.isCompleted, completedAt: !existing.isCompleted ? new Date() : null }
+    });
+  } else {
+    await prisma.userBossObjective.create({
+      data: { userId, objectiveId, isCompleted: true, completedAt: new Date() }
+    });
+  }
+
+  revalidatePath('/dashboard/bosses');
+  return { success: true };
+}

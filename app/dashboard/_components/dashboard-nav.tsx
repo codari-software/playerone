@@ -14,12 +14,14 @@ import {
   Dumbbell,
   FileText,
   Droplets,
+  Skull,
 } from 'lucide-react';
 
 const navItems = [
   { name: 'Início', href: '/dashboard', icon: Home },
   { name: 'Finanças', href: '/dashboard/finances', icon: DollarSign },
   { name: 'Treino', href: '/dashboard/workout', icon: Dumbbell },
+  { name: 'Chefões', href: '/dashboard/bosses', icon: Skull },
   { name: 'Lore & Notas', href: '/dashboard/lore', icon: FileText },
   { name: 'Água', href: '/dashboard/water', icon: Droplets },
   { name: 'Conquistas', href: '/dashboard/achievements', icon: Award },
@@ -35,7 +37,7 @@ export function DashboardNav() {
       {/* Spacer to keep content in place when sidebar is collapsed */}
       <div className="w-16 md:w-20 h-full shrink-0" />
       
-      <nav className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-16 md:w-20 hover:w-64 bg-[#111] border-r-[4px] border-[#222] transition-all duration-300 ease-in-out group/nav p-4 overflow-hidden z-50">
+      <nav className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-16 md:w-20 hover:w-64 bg-[#111] border-r-[4px] border-[#222] transition-all duration-300 ease-in-out group/nav p-4 z-50 sidebar-scroll overflow-x-hidden">
         <div className="flex flex-col space-y-4 w-full">
           {navItems.map((item) => {
             const isActive = pathname === item.href;

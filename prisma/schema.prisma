@@ -54,6 +54,8 @@ model User {
   sessions            Session[]
   accounts            Account[]
   notes               Note[]
+  bossProgress        UserBoss[]
+  bossObjectives      UserBossObjective[]
 }
 
 enum CharacterClass {
@@ -301,4 +303,56 @@ model Note {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+model Boss {
+  id           String      @id @default(cuid())
+  name         String
+  description  String
+  level        Int
+  hp           Int
+  xpReward     Int
+  difficulty   Int         // 1-10
+  imageUrl     String?
+  order        Int         @unique // 1, 2, 3, 4, 5
+  
+  userProgress UserBoss[]
+  objectives   BossObjective[]
+}
+
+model BossObjective {
+  id          String   @id @default(cuid())
+  bossId      String
+  boss        Boss     @relation(fields: [bossId], references: [id], onDelete: Cascade)
+  description String
+  hpDamage    Int      // Dano causado ao HP do boss ao completar
+  
+  userCompletions UserBossObjective[]
+}
+
+model UserBossObjective {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  objectiveId     String
+  objective       BossObjective @relation(fields: [objectiveId], references: [id], onDelete: Cascade)
+  isCompleted     Boolean  @default(false)
+  completedAt     DateTime?
+
+  @@unique([userId, objectiveId])
+  @@index([userId])
+}
+
+model UserBoss {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bossId      String
+  boss        Boss     @relation(fields: [bossId], references: [id], onDelete: Cascade)
+  status      String   @default("LOCKED") // LOCKED, UNLOCKED, DEFEATED
+  lastDefeatedAt DateTime?
+
+  @@index([userId])
+  @@index([bossId])
+  @@unique([userId, bossId])
 }

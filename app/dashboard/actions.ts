@@ -79,6 +79,22 @@ export async function saveCharacterClass(characterClass: 'WARRIOR' | 'MAGE' | 'A
   return { success: true };
 }
 
+export async function saveCharacterSkin(gender: string, characterSkin: string) {
+  const userId = await getUserId();
+  if (!userId) throw new Error('Unauthorized');
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { 
+      gender,
+      characterSkin 
+    },
+  });
+
+  revalidatePath('/dashboard');
+  return { success: true };
+}
+
 export async function completeTutorial() {
   const userId = await getUserId();
 

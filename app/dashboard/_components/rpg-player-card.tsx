@@ -18,15 +18,41 @@ export function RPGPlayerCard({ user, xpProgress }: RPGPlayerCardProps) {
   const equippedItems = user.inventory
     ? user.inventory.filter((ui: any) => ui.isEquipped).map((ui: any) => ui.item)
     : [];
+    
+  const equippedSkin = equippedItems.find((i: any) => i.type === 'SKIN');
+  
+  let skinUrl = null;
+  if (equippedSkin) {
+    const isPaid = equippedSkin.name === 'Guerreiro Padrão' || equippedSkin.priceXP > 0; // Simple logic for now
+    const folder = isPaid ? 'paid' : 'free';
+    const filename = 
+      equippedSkin.name === 'Guerreiro Padrão' ? 'guerreiro_padrao.png' : 
+      equippedSkin.name === 'Mago das Chamas' ? 'mago_chamas.png' : 
+      equippedSkin.name === 'Sombra da Noite' ? 'sombra_noite.png' : 
+      equippedSkin.name === 'Paladino de Ouro' ? 'paladino_ouro.png' : 
+      equippedSkin.imageUrl || `${equippedSkin.id}.png`;
+    skinUrl = `/images/skins/${folder}/${user.gender || 'male'}/${filename}`;
+  } else if (user.characterSkin && user.gender) {
+    skinUrl = `/images/skins/free/${user.gender}/${user.characterSkin}`;
+  }
+
+  const equippedWeapon = equippedItems.find((i: any) => i.type === 'WEAPON');
+  const weaponUrl = equippedWeapon?.name === 'Espada de Madeira' 
+    ? '/images/items/weapons/espada_madeira.png' 
+    : null;
 
   return (
     <div className="p-[2px] pixel-corners bg-gradient-to-r from-[#ff6b6b] via-purple-500 to-blue-500 animate-in fade-in slide-in-from-top duration-700">
       <div className="pixel-corners bg-[#18181b] p-6 md:p-10">
         <div className="flex flex-col md:flex-row items-center gap-10">
           <div className="relative group">
-            <div className="absolute -inset-4 bg-[#ff6b6b]/20 blur-2xl group-hover:bg-[#ff6b6b]/40 transition-all duration-500 rounded-full" />
-            <div className="relative p-2 bg-[#222] pixel-corners">
-              <CharacterDisplay equipped={equippedItems} />
+            <div className="absolute -inset-8 bg-[#ff6b6b]/20 blur-3xl group-hover:bg-[#ff6b6b]/40 transition-all duration-500 rounded-full" />
+            <div className="relative">
+              <CharacterDisplay 
+                equipped={equippedItems} 
+                skinUrl={skinUrl} 
+                weaponUrl={weaponUrl}
+              />
             </div>
           </div>
 

@@ -87,14 +87,35 @@ export default async function ProfilePage() {
         <p className="text-2xl text-gray-400">Suas estatísticas vitais e status de assinante.</p>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      <div className="flex flex-col gap-8">
         {/* Personagem Card */}
-        <div className="p-[2px] pixel-corners bg-[#333] animate-in fade-in slide-in-from-top duration-700 delay-100 min-w-0">
-           <div className="pixel-corners bg-[#18181b] p-6 md:p-10 h-full overflow-hidden">
+        <div className="animate-in fade-in slide-in-from-top duration-700 delay-100 min-w-0">
+           <div className="p-6 md:p-10 h-full">
             <div className="flex flex-col sm:flex-row items-center gap-8 md:gap-12 h-full">
                {/* Visual Display */}
-               <div className="flex-shrink-0 scale-75 md:scale-100">
-                  <CharacterDisplay equipped={equippedItems} />
+               <div className="flex-shrink-0">
+                  <CharacterDisplay 
+                    equipped={equippedItems} 
+                    skinUrl={(() => {
+                      const equippedSkin = equippedItems.find(i => i.type === 'SKIN');
+                      if (equippedSkin) {
+                        const isPaid = equippedSkin.name === 'Guerreiro Padrão' || equippedSkin.priceXP > 0;
+                        const folder = isPaid ? 'paid' : 'free';
+                        const filename = 
+                          equippedSkin.name === 'Guerreiro Padrão' ? 'guerreiro_padrao.png' : 
+                          equippedSkin.name === 'Mago das Chamas' ? 'mago_chamas.png' : 
+                          equippedSkin.name === 'Sombra da Noite' ? 'sombra_noite.png' : 
+                          equippedSkin.name === 'Paladino de Ouro' ? 'paladino_ouro.png' : 
+                          equippedSkin.imageUrl || `${equippedSkin.id}.png`;
+                        return `/images/skins/${folder}/${user.gender || 'male'}/${filename}`;
+                      }
+                      return user.characterSkin && user.gender ? `/images/skins/free/${user.gender}/${user.characterSkin}` : null;
+                    })()}
+                    weaponUrl={(() => {
+                      const equippedWeapon = equippedItems.find(i => i.type === 'WEAPON');
+                      return equippedWeapon?.name === 'Espada de Madeira' ? '/images/items/weapons/espada_madeira.png' : null;
+                    })()}
+                  />
                </div>
 
                <div className="flex-1 w-full min-w-0 space-y-6">
@@ -206,7 +227,7 @@ export default async function ProfilePage() {
          
          <div className="p-[2px] pixel-corners bg-[#222]">
             <div className="pixel-corners bg-[#111] p-6 md:p-10">
-               <AvatarStore items={storeItems} userXP={user.xp} />
+               <AvatarStore items={storeItems} userXP={user.xp} gender={user.gender} />
             </div>
          </div>
       </div>

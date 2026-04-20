@@ -35,6 +35,8 @@ model User {
   willpower     Int       @default(5)
   
   characterClass CharacterClass?
+  characterSkin  String?
+  gender         String?
   
   nickname      String?   @unique
   hasCompletedTutorial Boolean @default(false)

@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { RetroButton } from '@/components/RetroButton';
-import { checkNickname, saveNickname, saveCharacterClass, completeTutorial } from '../actions';
+import { checkNickname, saveNickname, saveCharacterClass, saveCharacterSkin, completeTutorial } from '../actions';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Shield, Wand2, Target as ArcherIcon, Check, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Shield, Wand2, Target as ArcherIcon, Check, ChevronRight, ChevronLeft, User as UserIcon } from 'lucide-react';
 import Image from 'next/image';
 
 const CLASSES = [
+  // ... (keep classes as is)
   {
     id: 'WARRIOR',
     name: 'Guerreiro',
@@ -18,7 +19,7 @@ const CLASSES = [
     color: 'text-orange-500',
     borderColor: 'border-orange-500/50',
     bgColor: 'bg-orange-500/10',
-    image: '/images/classes/warrior.png' // User should place the generated image here
+    image: '/images/classes/warrior.png'
   },
   {
     id: 'MAGE',
@@ -44,10 +45,17 @@ const CLASSES = [
   }
 ];
 
+const SKINS = {
+  male: ['skin01.png', 'skin02.png', 'skin03.png', 'skin04.png', 'skin05.png'],
+  female: ['skin01.png', 'skin02.png', 'skin03.png', 'skin04.png', 'skin05.png']
+};
+
 export function SetupWizard({ userEmail }: { userEmail: string }) {
   const [step, setStep] = useState(1);
   const [nickname, setNickname] = useState('');
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
+  const [selectedGender, setSelectedGender] = useState<'male' | 'female'>('male');
+  const [selectedSkin, setSelectedSkin] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -66,7 +74,7 @@ export function SetupWizard({ userEmail }: { userEmail: string }) {
       if (result.error) {
         setError(result.error);
       } else {
-        setStep(2); // Vai para seleção de classe
+        setStep(2);
       }
     } catch (err) {
       setError('Ocorreu um erro ao salvar o nickname.');
@@ -81,9 +89,23 @@ export function SetupWizard({ userEmail }: { userEmail: string }) {
     setLoading(true);
     try {
       await saveCharacterClass(selectedClass as any);
-      setStep(3); // Vai para o tutorial
+      setStep(3); // Skin selection
     } catch (err) {
       setError('Ocorreu um erro ao salvar sua classe.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectSkin = async () => {
+    if (!selectedSkin) return;
+
+    setLoading(true);
+    try {
+      await saveCharacterSkin(selectedGender, selectedSkin);
+      setStep(4); // Tutorial
+    } catch (err) {
+      setError('Ocorreu um erro ao salvar sua skin.');
     } finally {
       setLoading(false);
     }
@@ -116,7 +138,7 @@ export function SetupWizard({ userEmail }: { userEmail: string }) {
             {/* Step Indicator (Inside) */}
             <div className="flex justify-between items-center mb-8 pb-6 border-b border-white/5">
               <div className="flex gap-2">
-                {[1, 2, 3, 4].map((s) => (
+                {[1, 2, 3, 4, 5].map((s) => (
                   <div 
                     key={s}
                     className={cn(
@@ -127,7 +149,7 @@ export function SetupWizard({ userEmail }: { userEmail: string }) {
                 ))}
               </div>
               <span className="font-press-start text-[10px] text-white/40 uppercase tracking-widest">
-                {step} / 4
+                {step} / 5
               </span>
             </div>
             
@@ -269,8 +291,94 @@ export function SetupWizard({ userEmail }: { userEmail: string }) {
               </div>
             )}
 
-            {/* Step 3: Tutorial Map */}
+            {/* Step 3: Skin Selection */}
             {step === 3 && (
+              <div className="flex-1 flex flex-col space-y-8 animate-in fade-in slide-in-from-right-8 duration-500">
+                <div className="text-center space-y-2">
+                  <h2 className="font-press-start text-xl md:text-3xl text-white">ESCOLHA SUA SKIN</h2>
+                  <p className="text-sm text-gray-400">Personalize seu avatar para iniciar a aventura</p>
+                </div>
+
+                {/* Gender Toggle */}
+                <div className="flex justify-center gap-4">
+                  <button 
+                    onClick={() => { setSelectedGender('male'); setSelectedSkin(null); }}
+                    className={cn(
+                      "px-8 py-4 font-press-start text-xs pixel-corners border-2 transition-all",
+                      selectedGender === 'male' ? "bg-blue-500/20 border-blue-500 text-blue-400 shadow-[0_0_20px_rgba(59,130,246,0.3)]" : "bg-white/5 border-white/10 text-gray-500"
+                    )}
+                  >
+                    MASCULINO
+                  </button>
+                  <button 
+                    onClick={() => { setSelectedGender('female'); setSelectedSkin(null); }}
+                    className={cn(
+                      "px-8 py-4 font-press-start text-xs pixel-corners border-2 transition-all",
+                      selectedGender === 'female' ? "bg-pink-500/20 border-pink-500 text-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.3)]" : "bg-white/5 border-white/10 text-gray-500"
+                    )}
+                  >
+                    FEMININO
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {SKINS[selectedGender].map((skin) => {
+                    const isSelected = selectedSkin === skin;
+                    const skinPath = `/images/skins/free/${selectedGender}/${skin}`;
+                    
+                    return (
+                      <button
+                        key={skin}
+                        onClick={() => setSelectedSkin(skin)}
+                        className={cn(
+                          "relative group aspect-square p-2 pixel-corners border-2 transition-all duration-300",
+                          isSelected 
+                            ? "bg-red-500/10 border-[#ff6b6b] scale-105 shadow-[0_0_20px_rgba(255,107,107,0.3)]" 
+                            : "bg-white/5 border-white/10 hover:border-white/30"
+                        )}
+                      >
+                        <div className="relative w-full h-full">
+                          <Image 
+                            src={skinPath} 
+                            alt={skin} 
+                            fill
+                            className={cn(
+                              "object-contain transition-all duration-500",
+                              isSelected ? "grayscale-0" : "grayscale opacity-50 group-hover:grayscale-0 group-hover:opacity-100"
+                            )}
+                          />
+                        </div>
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 bg-[#ff6b6b] p-0.5 rounded-full">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="flex justify-between items-center pt-8 border-t border-white/5">
+                  <button 
+                    onClick={() => setStep(2)}
+                    className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors font-press-start text-[10px]"
+                  >
+                    <ChevronLeft className="w-4 h-4" /> VOLTAR
+                  </button>
+                  <RetroButton 
+                    active={!!selectedSkin} 
+                    className="px-12 py-4" 
+                    onClick={handleSelectSkin}
+                    disabled={loading || !selectedSkin}
+                  >
+                    {loading ? 'CONFIRMANDO...' : 'VESTIR SKIN'}
+                  </RetroButton>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Tutorial Map */}
+            {step === 4 && (
               <div className="space-y-12 animate-in fade-in slide-in-from-right-8 duration-500 flex-1 flex flex-col justify-center">
                 <div className="text-center space-y-4">
                   <h2 className="font-press-start text-2xl text-white">CONHEÇA SEU QG</h2>
@@ -302,15 +410,15 @@ export function SetupWizard({ userEmail }: { userEmail: string }) {
                 </div>
 
                 <div className="flex justify-center pt-8">
-                  <RetroButton active className="px-16 py-6 text-lg" onClick={() => setStep(4)}>
+                  <RetroButton active className="px-16 py-6 text-lg" onClick={() => setStep(5)}>
                     PRÓXIMO PASSO »
                   </RetroButton>
                 </div>
               </div>
             )}
 
-            {/* Step 4: Finalize */}
-            {step === 4 && (
+            {/* Step 5: Finalize */}
+            {step === 5 && (
               <div className="flex-1 flex flex-col items-center justify-center text-center space-y-12 animate-in fade-in zoom-in-95 duration-500">
                 <div className="relative">
                   <div className="text-8xl animate-pulse">🏆</div>

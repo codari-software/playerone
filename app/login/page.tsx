@@ -25,16 +25,6 @@ export default function LoginPage() {
 
             <LoginForm />
 
-            <div className="mt-8 flex flex-col items-center gap-4 text-center pt-6 border-t-2 border-[#333]">
-              <p className="text-gray-400 text-2xl">
-                AINDA NÃO TEM UMA CONTA?
-              </p>
-              <Link href="/#pricing" className="w-full">
-                <RetroButton className="w-full">
-                  COMPRAR ACESSO AO JOGO
-                </RetroButton>
-              </Link>
-            </div>
           </div>
         </div>
       </div>
